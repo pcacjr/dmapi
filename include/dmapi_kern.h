@@ -115,18 +115,18 @@ int		dm_vp_to_handle (
 /* The following prototypes and definitions are used by DMAPI as its
    interface into the filesystem code.  Communication between DMAPI and the
    filesystem are established as follows:
-   1. DMAPI uses the F_DMAPI command in VOP_FCNTL() to ask for the addresses
+   1. DMAPI uses the VFS_DMAPI_FSYS_VECTOR to ask for the addresses
       of all the functions within the filesystem that it may need to call.
    2. The filesystem returns an array of function name/address pairs which
       DMAPI builds into a function vector.
-   The VOP_FCNTL() call is only made one time for a particular filesystem
-   type.  From then on, DMAPI uses its function vector to call the filesystem
-   functions directly.  Functions in the array which DMAPI doesn't recognize
-   are ignored.  A dummy function which returns ENOSYS is used for any function
-   that DMAPI needs but which was not provided by the filesystem.  If XFS
-   doesn't recognize the F_DMAPI fcntl, DMAPI assumes that it doesn't have the
-   X/Open support code; in this case DMAPI uses the XFS-code originally bundled
-   within DMAPI.
+   The VFS_DMAPI_FSYS_VECTOR call is only made one time for a particular
+   filesystem type.  From then on, DMAPI uses its function vector to call the
+   filesystem functions directly.  Functions in the array which DMAPI doesn't
+   recognize are ignored.  A dummy function which returns ENOSYS is used for
+   any function that DMAPI needs but which was not provided by the filesystem.
+   If XFS doesn't recognize the VFS_DMAPI_FSYS_VECTOR, DMAPI assumes that it
+   doesn't have the X/Open support code; in this case DMAPI uses the XFS-code
+   originally bundled within DMAPI.
 
    The goal of this interface is allow incremental changes to be made to
    both the filesystem and to DMAPI while minimizing inter-patch dependencies,
@@ -417,7 +417,7 @@ typedef	int	(*dm_fsys_write_invis_rvp_t)(
 			void		*bufp,
 			int		*rvp);
 
-/* Structure definitions used by the F_DMAPI fcntl() call. */
+/* Structure definitions used by the VFS_DMAPI_FSYS_VECTOR call. */
 
 typedef	struct {
 	dm_fsys_switch_t  func_no;	/* function number */
@@ -459,46 +459,19 @@ typedef	struct {
 	} u_fc;
 } fsys_function_vector_t;
 
-typedef	struct	{
+struct dm_fcntl_vector {
 	int	code_level;
 	int	count;		/* Number of functions in the vector */
 	fsys_function_vector_t *vecp;
-} dm_fcntl_vector_t;
+};
+typedef struct dm_fcntl_vector dm_fcntl_vector_t;
 
-typedef	struct	{
+struct dm_fcntl_mapevent {
 	size_t	length;			/* length of transfer */
 	dm_eventtype_t	max_event;	/* Maximum (WRITE or READ)  event */
 	int	error;			/* returned error code */
-} dm_fcntl_mapevent_t;
-
-typedef	struct	{
-	size_t	length;			/* length of transfer */
-	dm_eventtype_t	max_event;	/* Maximum (WRITE or READ)  event */
-	dm_eventtype_t	issue_event;	/* Event needed to be issued */
-	int	error;			/* returned error code */
-} dm_fcntl_testevent_t;
-
-typedef	struct	{
-	int		fsd_dmevmask;	/* di_devmask */
-	unsigned short  fsd_padding;
-	unsigned short  fsd_dmstate;	/* di_dmstate */
-} dm_fcntl_fssetdm_t;
-
-typedef	struct	dm_fcntl {
-	int	dmfc_subfunc;
-	union	{
-		dm_fcntl_vector_t	vecrq;
-		dm_fcntl_mapevent_t	maprq;
-		dm_fcntl_testevent_t	testrq;
-		dm_fcntl_fssetdm_t	setdmrq;
-	} u_fcntl;
-} dm_fcntl_t;
-
-#define	DM_FCNTL_FSYSVECTOR	1
-#define	DM_FCNTL_MAPEVENT	2
-#define DM_FCNTL_TESTEVENT	3
-#define DM_FCNTL_FSSETDM	4
-
+};
+typedef struct dm_fcntl_mapevent dm_fcntl_mapevent_t;
 
 #endif	/* __KERNEL__ */
 
