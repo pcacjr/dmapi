@@ -31,6 +31,7 @@
  */
 
 #include <fcntl.h>
+#include <stdarg.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <sys/errno.h>
