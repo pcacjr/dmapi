@@ -309,7 +309,7 @@ struct dm_destroy_event {
 typedef	struct dm_destroy_event dm_destroy_event_t;
 
 struct dm_mount_event {
-	mode_t		me_mode;
+	dm_mode_t	me_mode;
 	dm_vardata_t	me_handle1;
 	dm_vardata_t	me_handle2;
 	dm_vardata_t	me_name1;
@@ -319,7 +319,7 @@ struct dm_mount_event {
 typedef	struct dm_mount_event dm_mount_event_t;
 
 struct dm_namesp_event {
-	mode_t		ne_mode;
+	dm_mode_t	ne_mode;
 	dm_vardata_t	ne_handle1;
 	dm_vardata_t	ne_handle2;
 	dm_vardata_t	ne_name1;
@@ -345,7 +345,7 @@ struct dm_extent {
 typedef struct dm_extent dm_extent_t;
 
 struct dm_fileattr {
-	mode_t		fa_mode;
+	dm_mode_t	fa_mode;
 	uid_t		fa_uid;
 	gid_t		fa_gid;
 	time_t		fa_atime;
@@ -360,7 +360,7 @@ typedef struct dm_fileattr dm_fileattr_t;
 
 struct dm_inherit {				/* not supported */
 	dm_attrname_t	ih_name;
-	mode_t		ih_filetype;
+	dm_mode_t	ih_filetype;
 };
 typedef struct dm_inherit dm_inherit_t;
 
