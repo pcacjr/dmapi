@@ -39,7 +39,8 @@
 #include <unistd.h>
 #ifdef linux
 #include <linux/types.h>
-#include <linux/unistd.h>
+#include <unistd.h>
+#include <syscall.h>
 #include <xfs/handle.h>
 #include <asm/posix_types.h>
 #include <linux/dirent.h>
@@ -200,13 +201,10 @@ getcomp(
 #ifdef linux
 			int cnt;
 
-/* XXX */
-_syscall3(int, getdents, uint, fd, struct dirent *, dirp, uint, count);
-
-
 			do {
-				cnt = getdents(dirfd, (struct dirent *)buf,
-						sizeof(buf) );
+				cnt = syscall(SYS_getdents, dirfd,
+					      (struct dirent *)buf,
+					      sizeof(buf));
 				if (cnt > 0 )
 					size += cnt;
 				if (cnt < 0)
