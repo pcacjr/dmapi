@@ -41,6 +41,7 @@
 #include <linux/types.h>
 #include <unistd.h>
 #include <syscall.h>
+#include <xfs/xfs_fs.h>
 #include <xfs/handle.h>
 #include <asm/posix_types.h>
 #include <linux/dirent.h>
