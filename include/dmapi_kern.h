@@ -75,14 +75,14 @@ struct xfs_handle_t;
 
 int		dm_send_data_event(
 			dm_eventtype_t	event,
-			struct bhv_desc *bdp,
+			struct vnode	*vp,
 			dm_right_t	vp_right,
 			xfs_off_t	off,
 			size_t		len,
 			int		flags);
 
 int		dm_send_destroy_event(
-			struct bhv_desc *bdp,
+			struct vnode	*vp,
 			dm_right_t	vp_right);
 
 int		dm_send_mount_event(
