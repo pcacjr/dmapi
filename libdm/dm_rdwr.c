@@ -30,8 +30,9 @@
  * http://oss.sgi.com/projects/GenInfo/SGIGPLNoticeExplan/
  */
 
-#include <linux/dmapi_kern.h>
-#include <dmapi_lib.h>
+#include <dmapi.h>
+#include <dmapi_kern.h>
+#include "dmapi_lib.h"
 
 
 extern dm_ssize_t

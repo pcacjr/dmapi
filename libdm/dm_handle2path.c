@@ -39,14 +39,14 @@
 #include <unistd.h>
 #ifdef linux
 #include <linux/unistd.h>
-#endif
-
-#include <linux/dmapi_kern.h>
-#include <dmapi_lib.h>
-#include <handle.h>
-
+#include <xfs/handle.h>
 #include <asm/posix_types.h>
 #include <linux/dirent.h>
+#endif
+
+#include <dmapi.h>
+#include <dmapi_kern.h>
+#include "dmapi_lib.h"
 
 
 /* Originally this routine called SGI_OPEN_BY_HANDLE on the target object, did

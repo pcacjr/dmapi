@@ -30,27 +30,19 @@
 # http://oss.sgi.com/projects/GenInfo/SGIGPLNoticeExplan/
 #
 
-TOPDIR = ..
+TOPDIR = ../..
 include $(TOPDIR)/include/builddefs
 
-LIBTARGET = libdm.so.1
-STATICLIBTARGET = libdm.a
+MAN_SECTION	= 3
 
-HFILES = dmapi_lib.h
-CFILES = dmapi_lib.c dm_attr.c dm_bulkattr.c dm_config.c dm_dmattr.c \
-	 dm_event.c dm_handle.c dm_handle2path.c dm_hole.c dm_mountinfo.c \
-	 dm_region.c dm_right.c dm_rdwr.c dm_session.c
-LCFLAGS = -D_REENTRANT
+MAN_PAGES	= $(shell echo *.$(MAN_SECTION))
+MAN_DEST	= $(PKG_MAN_DIR)/man$(MAN_SECTION)
+LSRCFILES	= $(MAN_PAGES)
 
-default: $(LIBTARGET) $(STATICLIBTARGET)
+default install : $(MAN_PAGES)
 
 include $(BUILDRULES)
 
-install: default
-	$(INSTALL) -m 755 -d $(PKG_LIB_DIR)
-	$(INSTALL) -m 755 $(LIBTARGET) $(PKG_LIB_DIR)
-
-install-dev: default
-	$(INSTALL) -m 755 -d $(PKG_LIB_DIR)
-	$(INSTALL) -m 644 $(STATICLIBTARGET) $(PKG_LIB_DIR)
-	$(INSTALL) -S $(PKG_LIB_DIR)/$(LIBTARGET) $(PKG_LIB_DIR)/libdm.so
+install-dev : default
+	$(INSTALL) -m 755 -d $(MAN_DEST)
+	$(INSTALL_MAN)

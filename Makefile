@@ -30,27 +30,45 @@
 # http://oss.sgi.com/projects/GenInfo/SGIGPLNoticeExplan/
 #
 
-TOPDIR = ..
+TOPDIR = .
+HAVE_BUILDDEFS = $(shell test -f $(TOPDIR)/include/builddefs && echo yes || echo no)
+
+ifeq ($(HAVE_BUILDDEFS), yes)
 include $(TOPDIR)/include/builddefs
+endif
 
-LIBTARGET = libdm.so.1
-STATICLIBTARGET = libdm.a
+CONFIGURE = configure include/builddefs
+LSRCFILES = configure configure.in Makepkgs install-sh README VERSION
+LDIRT = config.* conftest* Logs/* built install.* install-dev.* *.gz
 
-HFILES = dmapi_lib.h
-CFILES = dmapi_lib.c dm_attr.c dm_bulkattr.c dm_config.c dm_dmattr.c \
-	 dm_event.c dm_handle.c dm_handle2path.c dm_hole.c dm_mountinfo.c \
-	 dm_region.c dm_right.c dm_rdwr.c dm_session.c
-LCFLAGS = -D_REENTRANT
+SUBDIRS = include libdm man doc debian build
 
-default: $(LIBTARGET) $(STATICLIBTARGET)
+default: $(CONFIGURE)
+ifeq ($(HAVE_BUILDDEFS), no)
+	$(MAKE) -C . $@
+else
+	$(SUBDIRS_MAKERULE)
+endif
 
+ifeq ($(HAVE_BUILDDEFS), yes)
 include $(BUILDRULES)
+else
+clean:	# if configure hasn't run, nothing to clean
+endif
+
+$(CONFIGURE): configure.in include/builddefs.in VERSION
+	rm -f config.cache
+	autoconf
+	./configure
 
 install: default
-	$(INSTALL) -m 755 -d $(PKG_LIB_DIR)
-	$(INSTALL) -m 755 $(LIBTARGET) $(PKG_LIB_DIR)
+	$(SUBDIRS_MAKERULE)
+	$(INSTALL) -m 755 -d $(PKG_DOC_DIR)
+	$(INSTALL) -m 644 README $(PKG_DOC_DIR)
 
 install-dev: default
-	$(INSTALL) -m 755 -d $(PKG_LIB_DIR)
-	$(INSTALL) -m 644 $(STATICLIBTARGET) $(PKG_LIB_DIR)
-	$(INSTALL) -S $(PKG_LIB_DIR)/$(LIBTARGET) $(PKG_LIB_DIR)/libdm.so
+	$(SUBDIRS_MAKERULE)
+
+realclean distclean: clean
+	rm -f $(LDIRT) $(CONFIGURE)
+	[ ! -d Logs ] || rmdir Logs

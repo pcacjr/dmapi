@@ -30,27 +30,21 @@
 # http://oss.sgi.com/projects/GenInfo/SGIGPLNoticeExplan/
 #
 
-TOPDIR = ..
+TOPDIR = ../..
 include $(TOPDIR)/include/builddefs
 
-LIBTARGET = libdm.so.1
-STATICLIBTARGET = libdm.a
+BINTAR=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+LDIRT = $(BINTAR)
 
-HFILES = dmapi_lib.h
-CFILES = dmapi_lib.c dm_attr.c dm_bulkattr.c dm_config.c dm_dmattr.c \
-	 dm_event.c dm_handle.c dm_handle2path.c dm_hole.c dm_mountinfo.c \
-	 dm_region.c dm_right.c dm_rdwr.c dm_session.c
-LCFLAGS = -D_REENTRANT
-
-default: $(LIBTARGET) $(STATICLIBTARGET)
+default install install-dev :
 
 include $(BUILDRULES)
 
-install: default
-	$(INSTALL) -m 755 -d $(PKG_LIB_DIR)
-	$(INSTALL) -m 755 $(LIBTARGET) $(PKG_LIB_DIR)
-
-install-dev: default
-	$(INSTALL) -m 755 -d $(PKG_LIB_DIR)
-	$(INSTALL) -m 644 $(STATICLIBTARGET) $(PKG_LIB_DIR)
-	$(INSTALL) -S $(PKG_LIB_DIR)/$(LIBTARGET) $(PKG_LIB_DIR)/libdm.so
+dist : default
+	@HERE=`pwd`; cd $${DIST_ROOT:-/}; \
+	sort $$HERE/../bin-manifest | uniq | $(AWK) ' \
+		$$1 == "f" { printf (".%s\n", $$6); } \
+		$$1 == "d" { next; } \
+		$$1 == "l" { printf (".%s\n", $$3); }' \
+	| $(TAR) -T - -cf - | $(ZIP) --best > $$HERE/$(BINTAR)
+	@echo Wrote: `pwd`/$(BINTAR)

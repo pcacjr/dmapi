@@ -34,11 +34,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <linux/dmapi_kern.h>
-#include <dmapi_lib.h>
+#include <dmapi.h>
+#include <dmapi_kern.h>
+#include "dmapi_lib.h"
 
 #ifdef linux
-#include <xfs_fs.h>
+#include <xfs/xfs_fs.h>
+#include <xfs/handle.h>
 #else
 #include <sys/handle.h>
 #endif

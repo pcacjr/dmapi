@@ -33,24 +33,8 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-LIBTARGET = libdm.so.1
-STATICLIBTARGET = libdm.a
+LSRCFILES = changelog control copyright rules
 
-HFILES = dmapi_lib.h
-CFILES = dmapi_lib.c dm_attr.c dm_bulkattr.c dm_config.c dm_dmattr.c \
-	 dm_event.c dm_handle.c dm_handle2path.c dm_hole.c dm_mountinfo.c \
-	 dm_region.c dm_right.c dm_rdwr.c dm_session.c
-LCFLAGS = -D_REENTRANT
-
-default: $(LIBTARGET) $(STATICLIBTARGET)
+default install install-dev:
 
 include $(BUILDRULES)
-
-install: default
-	$(INSTALL) -m 755 -d $(PKG_LIB_DIR)
-	$(INSTALL) -m 755 $(LIBTARGET) $(PKG_LIB_DIR)
-
-install-dev: default
-	$(INSTALL) -m 755 -d $(PKG_LIB_DIR)
-	$(INSTALL) -m 644 $(STATICLIBTARGET) $(PKG_LIB_DIR)
-	$(INSTALL) -S $(PKG_LIB_DIR)/$(LIBTARGET) $(PKG_LIB_DIR)/libdm.so

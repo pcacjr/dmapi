@@ -33,24 +33,23 @@
 TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
-LIBTARGET = libdm.so.1
-STATICLIBTARGET = libdm.a
+# [don't install COPYING for Debian builds - use Debian preferred method]
+HAVE_DEBIAN = $(shell test -f /etc/debian_version && echo yes || echo no)
 
-HFILES = dmapi_lib.h
-CFILES = dmapi_lib.c dm_attr.c dm_bulkattr.c dm_config.c dm_dmattr.c \
-	 dm_event.c dm_handle.c dm_handle2path.c dm_hole.c dm_mountinfo.c \
-	 dm_region.c dm_right.c dm_rdwr.c dm_session.c
-LCFLAGS = -D_REENTRANT
+LSRCFILES = INSTALL PORTING CHANGES COPYING
+LDIRT = *.gz
 
-default: $(LIBTARGET) $(STATICLIBTARGET)
+default: $(CMDTARGET) CHANGES.gz
 
 include $(BUILDRULES)
 
-install: default
-	$(INSTALL) -m 755 -d $(PKG_LIB_DIR)
-	$(INSTALL) -m 755 $(LIBTARGET) $(PKG_LIB_DIR)
+CHANGES.gz:
+	$(ZIP) --best -c < CHANGES > $@
 
-install-dev: default
-	$(INSTALL) -m 755 -d $(PKG_LIB_DIR)
-	$(INSTALL) -m 644 $(STATICLIBTARGET) $(PKG_LIB_DIR)
-	$(INSTALL) -S $(PKG_LIB_DIR)/$(LIBTARGET) $(PKG_LIB_DIR)/libdm.so
+install: default
+	$(INSTALL) -m 755 -d $(PKG_DOC_DIR)
+ifeq ($(HAVE_DEBIAN), no)
+	$(INSTALL) -m 644 COPYING $(PKG_DOC_DIR)
+endif
+	$(INSTALL) -m 644 PORTING CHANGES.gz $(PKG_DOC_DIR)
+install-dev:

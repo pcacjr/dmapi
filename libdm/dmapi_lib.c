@@ -30,13 +30,14 @@
  * http://oss.sgi.com/projects/GenInfo/SGIGPLNoticeExplan/
  */
 
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
 #include <sys/errno.h>
 
-#include <sys/ioctl.h>
-#include <linux/dmapi_kern.h>
-#include <dmapi_lib.h>
+#include <dmapi.h>
+#include <dmapi_kern.h>
+#include "dmapi_lib.h"
 
 #define ARG(y)	(long)va_arg(ap,y)
 
