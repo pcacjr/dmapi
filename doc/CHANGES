@@ -1,3 +1,9 @@
+dmapi-2.0.5 (04 July 2002)
+	- Build infrastructure updates so that configure options can be
+	  used to specify paths rather than semi-hard-coded path names
+	  controlled by the ROOT/ROOT_PREFIX environment variables; eg.
+	  now allows /lib64 and /lib32
+
 dmapi-2.0.4 (18 June 2002)
 	- kernel<>library interface for DM_OPEN_BY_HANDLE changed
 
