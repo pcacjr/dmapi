@@ -38,6 +38,7 @@
 #include <string.h>
 #include <unistd.h>
 #ifdef linux
+#include <linux/types.h>
 #include <linux/unistd.h>
 #include <xfs/handle.h>
 #include <asm/posix_types.h>

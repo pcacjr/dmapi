@@ -98,6 +98,13 @@ test -z "$ECHO" && AC_PATH_PROG(ECHO, echo, /bin/echo)
 echo=$ECHO
 AC_SUBST(echo)
 
+AC_CHECK_HEADER(xfs/handle.h,, [
+	echo
+	echo 'FATAL ERROR: could not find a valid XFS handle header.'
+	echo 'Install either the xfsprogs-devel (rpm) or the xfslibs-dev (deb) package.'
+	exit 1
+])
+
 
 dnl alternate root and usr prefixes
 test -z "$ROOT_PREFIX" && ROOT_PREFIX=""
