@@ -35,8 +35,11 @@ include $(TOPDIR)/include/builddefs
 
 HFILES = dmapi.h
 LSRCFILES = builddefs.in buildmacros buildrules dmapi_kern.h
+LDIRT = xfs
 
 default install :
+	rm -f xfs
+	$(LN_S) . xfs
 
 include $(BUILDRULES)
 
