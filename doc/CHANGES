@@ -1,3 +1,9 @@
+dmapi-2.1.0 (18 October 2003)
+	- libdm now attempts to find the dmapi device in /dev, if that
+	  fails then it falls back to the old location in /proc.
+	- Rework Debian package names to more closely conform to the
+	  packaging policy requirements.
+
 dmapi-2.0.8 (26 April 2003)
 	- Rework configure.in to make use of shared macros.
 

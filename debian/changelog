@@ -1,3 +1,10 @@
+dmapi (2.1.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Renamed packages to follow policy guidelines (closes: #141753)
+
+ -- Nathan Scott <nathans@debian.org>  Sat, 18 Oct 2003 09:38:40 +1000
+
 dmapi (2.0.8-1) unstable; urgency=low
 
   * New upstream release
