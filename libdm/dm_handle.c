@@ -154,7 +154,6 @@ parse_handle(
 	dm_ino_t	*inop,
 	dm_igen_t	*igenp)
 {
-/* XXX */
 	xfs_handle_t	handle;
 	xfs_fid2_t	*xfid2;
 	fid_t		*fidp;
@@ -173,12 +172,12 @@ parse_handle(
 	if (hlen == sizeof(handle.ha_fsid))
 		return(DM_HANDLE_FILESYSTEM);
 
-#if 0
-	if (handle.ha_fid.fid_len != (hlen - sizeof(handle.ha_fsid) - sizeof(handle.ha_fid.fid_len)))
-		return(DM_HANDLE_BAD);
-#else
+#ifdef linux
 	fidp = (fid_t*)&handle.ha_fid;
 	if (fidp->fid_len != (hlen - sizeof(handle.ha_fsid) - sizeof(fidp->fid_len)))
+		return(DM_HANDLE_BAD);
+#else
+	if (handle.ha_fid.fid_len != (hlen - sizeof(handle.ha_fsid) - sizeof(handle.ha_fid.fid_len)))
 		return(DM_HANDLE_BAD);
 #endif
 

@@ -1,3 +1,9 @@
+dmapi (2.0.1-1) unstable; urgency=low
+
+  * Fix dm_handle_to_path().
+
+ -- Dean Roehrich, Thu Mar 21 11:10:24 2002
+
 dmapi (2.0.0-1) unstable; urgency=low
 
   * Major release to coincide with switch to new extended attributes

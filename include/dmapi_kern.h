@@ -112,6 +112,10 @@ int		dm_vp_to_handle (
 			struct vnode	*vp,
 			xfs_handle_t	*handlep);
 
+void		dm_hookup_vfsmount(
+			vfs_t		*vfsp,
+			struct vfsmount	*mnt);
+
 /* The following prototypes and definitions are used by DMAPI as its
    interface into the filesystem code.  Communication between DMAPI and the
    filesystem are established as follows:
@@ -543,6 +547,6 @@ typedef struct dm_fcntl_mapevent dm_fcntl_mapevent_t;
 #define	DM_SYNC_BY_HANDLE	54
 #define	DM_UPGRADE_RIGHT	55
 #define	DM_WRITE_INVIS		56
-
+#define	DM_OPEN_BY_HANDLE	57
 
 #endif /* __DMAPI_KERN_H__ */

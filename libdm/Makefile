@@ -34,7 +34,7 @@ TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
 LTLIBRARY = libdm.la
-LDLIBS = -lhandle
+#LDLIBS = -lhandle
 LT_CURRENT = 0
 LT_REVISION = 2
 LT_AGE = 0

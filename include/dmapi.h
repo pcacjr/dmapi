@@ -1021,6 +1021,12 @@ dm_write_invis(
 
 /* Non-standard SGI additions to the DMAPI interface. */
 
+int
+dm_open_by_handle(
+	void		*hanp,
+	size_t		hlen,
+	int		mode);
+
 extern int
 dm_get_dioinfo(
 	dm_sessid_t	sid,

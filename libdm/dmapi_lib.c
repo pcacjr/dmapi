@@ -363,6 +363,12 @@ dmi( int opcode, ... )
 		u.arg7 = ARG(char*);
 		u.arg8 = ARG(char*);
 		break;
+/* dm_handle2path */
+	case DM_OPEN_BY_HANDLE:
+		u.arg1 = ARG(void*);
+		u.arg2 = ARG(size_t);
+		u.arg3 = ARG(int);
+		break;
 /* dm_hole */
 	case DM_GET_ALLOCINFO:
 		u.arg1 = ARG(dm_sessid_t);

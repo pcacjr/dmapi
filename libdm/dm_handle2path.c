@@ -102,10 +102,10 @@ dm_handle_to_path(
 	if ((origfd = open(".", O_RDONLY)) < 0)
 		return -1;	/* leave errno set from open */
 
-#if 0
-	dirfd = (int)syssgi(SGI_OPEN_BY_HANDLE, dirhanp, dirhlen, O_RDONLY);
+#ifdef linux
+	dirfd = dmi(DM_OPEN_BY_HANDLE, dirhanp, dirhlen, O_RDONLY);
 #else
-	dirfd = open_by_handle(dirhanp, dirhlen, O_RDONLY);
+	dirfd = (int)syssgi(SGI_OPEN_BY_HANDLE, dirhanp, dirhlen, O_RDONLY);
 #endif
 	if (dirfd < 0) {
 		err = errno;
@@ -118,8 +118,44 @@ dm_handle_to_path(
 			if ((err = errno) == ERANGE)	/* buffer too small */
 				err = E2BIG;
 		} else {
-			err = getcomp(dirfd, targhanp, targhlen, pathbufp,
-					buflen, rlenp);
+			char		hbuf[DM_MAX_HANDLE_SIZE];
+			size_t		hlen;
+
+			/* Check that we're in the correct directory.
+			 * If the dir we wanted has not been accessed
+			 * then the kernel would have put us into the
+			 * filesystem's root directory--but at least
+			 * we'll be on the correct filesystem.
+			 */
+
+			err = 0;
+			if (dmi(DM_PATH_TO_HANDLE, pathbufp, hbuf, &hlen)) {
+				err = ENOENT;
+			}
+			else {
+				if (dm_handle_cmp(dirhanp, dirhlen, hbuf, hlen)) {
+					/* The dir we want has never been
+					 * accessed, so we'll have to find
+					 * it.
+					 */
+
+					/* XXX -- need something to march
+					   through all the dirs, trying to
+					   find the right one.  Something
+					   like a recursive version of
+					   getcomp().
+					   In practice, are we ever going
+					   to need this? */
+
+					err = ENOENT;
+				}
+			}
+
+			/* Now march through the dir to find the target. */
+			if (!err) {
+				err = getcomp(dirfd, targhanp, targhlen, pathbufp,
+						buflen, rlenp);
+			}
 		}
 		(void) fchdir(origfd);	/* can't do anything about a failure */
 	}
@@ -160,11 +196,10 @@ getcomp(
 	int		loc = 0;	/* byte offset of entry in the buffer */
 	int		size = 0;	/* number of bytes of data in buffer */
 	int		eof = 0;	/* did last ngetdents exhaust dir.? */
-#if 0
-/* XXX */
-	struct dirent64 *dp;		/* pointer to directory entry */
-#else
+#ifdef linux
 	struct dirent	*dp;
+#else
+	struct dirent64 *dp;		/* pointer to directory entry */
 #endif
 	char		hbuf[DM_MAX_HANDLE_SIZE];
 	size_t		hlen;
