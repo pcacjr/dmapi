@@ -1,3 +1,5 @@
+dmapi-0.1.2 (18 July 2001)
+	- change dmapi to use /proc instead of /dev/dmapi
 
 dmapi-0.1.1 (30 January 2001)
         - minor rpm and deb packaging work
