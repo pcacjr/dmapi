@@ -1,3 +1,9 @@
+dmapi (0.2.2-0) unstable; urgency=low
+
+  * New upstream release
+
+ -- Nathan Scott <nathans@debian.org>  Fri, 27 Jul 2001 07:59:49 +1000
+
 dmapi (0.2.1-0) unstable; urgency=low
 
   * New upstream release

@@ -2,7 +2,7 @@ Source: dmapi
 Section: admin
 Priority: optional
 Maintainer: Nathan Scott <nathans@debian.org>
-Build-Depends: xfslibs-dev, autoconf, debmake, libtool
+Build-Depends: xfslibs-dev (>= 1.3.3), autoconf, debmake, libtool
 Standards-Version: 3.5.5
 
 Package: dmapi
