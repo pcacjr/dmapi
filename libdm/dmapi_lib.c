@@ -48,7 +48,7 @@ static int dmapi_fd = -1;
 int
 dmi_init_service( char *versionstr )
 {
-	dmapi_fd = open( "/proc/fs/xfs/dmapi", O_RDWR );
+	dmapi_fd = open( "/proc/fs/xfs_dmapi", O_RDWR );
 	if( dmapi_fd == -1 )
 		return -1;
 	return 0;
