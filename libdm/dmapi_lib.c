@@ -50,7 +50,7 @@ static int dmapi_fd = -1;
 int
 dmi_init_service( char *versionstr )
 {
-	dmapi_fd = open( "/dev/xfs_dmapi", O_RDWR );
+	dmapi_fd = open( "/dev/dmapi", O_RDWR );
 	if( dmapi_fd == -1 ) {
 		/* Try the old device location, used with 2.4 kernels,
 		 * which still offers a compatible interface.
