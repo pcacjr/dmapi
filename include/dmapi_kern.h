@@ -33,6 +33,7 @@
 #ifndef __DMAPI_KERN_H__
 #define __DMAPI_KERN_H__
 
+#include <linux/fs.h>
 
 union sys_dmapi_uarg {
 	void *p;
@@ -51,7 +52,7 @@ typedef struct sys_dmapi_args sys_dmapi_args_t;
 
 #ifdef __KERNEL__
 
-struct xfs_handle_t;
+struct dm_handle_t;
 
 /* The first group of definitions and prototypes define the filesystem's
    interface into the DMAPI code.
@@ -71,35 +72,50 @@ struct xfs_handle_t;
 #define DM_CLVL_XOPEN	1	/* X/Open compliant DMAPI */
 
 
+/*
+ * Filesystem operations accessed by the DMAPI core.
+ */
+struct filesystem_dmapi_operations {
+	int (*get_fsys_vector)(struct super_block *sb, void *addr);
+	int (*fh_to_inode)(struct super_block *sb, struct inode **ip,
+			   struct dm_fsfid *fid);
+	struct file_operations * (*get_invis_ops)(struct inode *ip);
+	int (*inode_to_fh)(struct inode *ip, struct dm_fsfid *fid,
+			   dm_fsid_t *fsid );
+	void (*get_fsid)(struct super_block *sb, dm_fsid_t *fsid);
+};
+
+
 /* Prototypes used outside of the DMI module/directory. */
 
 int		dm_send_data_event(
 			dm_eventtype_t	event,
-			struct vnode	*vp,
+			struct inode	*ip,
 			dm_right_t	vp_right,
-			xfs_off_t	off,
+			dm_off_t	off,
 			size_t		len,
 			int		flags);
 
 int		dm_send_destroy_event(
-			struct vnode	*vp,
+			struct inode	*ip,
 			dm_right_t	vp_right);
 
 int		dm_send_mount_event(
-			struct vfs	*vfsp,
+			struct super_block	*sb,
 			dm_right_t	vfsp_right,
-			struct vnode	*vp,
+			struct inode	*ip,
 			dm_right_t	vp_right,
-			struct vnode	*rootvp,
+			struct inode	*rootip,
 			dm_right_t	rootvp_right,
 			char		*name1,
 			char		*name2);
 
 int		dm_send_namesp_event(
 			dm_eventtype_t	event,
-			struct vnode	*vp1,
+			struct super_block	*sb,
+			struct inode	*ip1,
 			dm_right_t	vp1_right,
-			struct vnode	*vp2,
+			struct inode	*ip2,
 			dm_right_t	vp2_right,
 			char		*name1,
 			char		*name2,
@@ -108,18 +124,26 @@ int		dm_send_namesp_event(
 			int		flags);
 
 void		dm_send_unmount_event(
-			struct vfs	*vfsp,
-			struct vnode	*vp,
-			dm_right_t	vfsp_right,
+			struct super_block *sbp,
+			struct inode	*ip,
+			dm_right_t	sbp_right,
 			mode_t		mode,
 			int		retcode,
 			int		flags);
 
 int		dm_code_level(void);
 
-int		dm_vp_to_handle (
-			struct vnode	*vp,
-			xfs_handle_t	*handlep);
+int		dm_ip_to_handle (
+			struct inode	*ip,
+			dm_handle_t	*handlep);
+
+void		dmapi_register(
+			struct file_system_type *fstype,
+			struct filesystem_dmapi_operations *dmapiops);
+
+void		dmapi_unregister(
+			struct file_system_type *fstype);
+
 
 /* The following prototypes and definitions are used by DMAPI as its
    interface into the filesystem code.	Communication between DMAPI and the
@@ -191,24 +215,24 @@ typedef enum {
  */
 
 typedef int	(*dm_fsys_clear_inherit_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			dm_attrname_t	*attrnamep);
 
 typedef int	(*dm_fsys_create_by_handle_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			void		*hanp,
 			size_t		hlen,
 			char		*cname);
 
 typedef int	(*dm_fsys_downgrade_right_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			u_int		type);		/* DM_FSYS_OBJ or zero */
 
 typedef int	(*dm_fsys_get_allocinfo_rvp_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			dm_off_t	*offp,
 			u_int		nelem,
@@ -217,7 +241,7 @@ typedef int	(*dm_fsys_get_allocinfo_rvp_t)(
 			int		*rvalp);
 
 typedef int	(*dm_fsys_get_bulkall_rvp_t)(
-			vnode_t		*vp,		/* root vnode */
+			struct inode	*ip,		/* root inode */
 			dm_right_t	right,
 			u_int		mask,
 			dm_attrname_t	*attrnamep,
@@ -228,7 +252,7 @@ typedef int	(*dm_fsys_get_bulkall_rvp_t)(
 			int		*rvalp);
 
 typedef int	(*dm_fsys_get_bulkattr_rvp_t)(
-			vnode_t		*vp,		/* root vnode */
+			struct inode	*ip,		/* root inode */
 			dm_right_t	right,
 			u_int		mask,
 			dm_attrloc_t	*locp,
@@ -238,32 +262,32 @@ typedef int	(*dm_fsys_get_bulkattr_rvp_t)(
 			int		*rvalp);
 
 typedef int	(*dm_fsys_get_config_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			dm_config_t	flagname,
 			dm_size_t	*retvalp);
 
 typedef int	(*dm_fsys_get_config_events_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			u_int		nelem,
 			dm_eventset_t	*eventsetp,
 			u_int		*nelemp);
 
 typedef int	(*dm_fsys_get_destroy_dmattr_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			dm_attrname_t	*attrnamep,
 			char		**valuepp,
 			int		*vlenp);
 
 typedef int	(*dm_fsys_get_dioinfo_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			dm_dioinfo_t	*diop);
 
 typedef int	(*dm_fsys_get_dirattrs_rvp_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			u_int		mask,
 			dm_attrloc_t	*locp,
@@ -273,7 +297,7 @@ typedef int	(*dm_fsys_get_dirattrs_rvp_t)(
 			int		*rvalp);
 
 typedef int	(*dm_fsys_get_dmattr_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			dm_attrname_t	*attrnamep,
 			size_t		buflen,
@@ -281,54 +305,54 @@ typedef int	(*dm_fsys_get_dmattr_t)(
 			size_t		*rlenp);
 
 typedef int	(*dm_fsys_get_eventlist_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			u_int		type,
 			u_int		nelem,
 			dm_eventset_t	*eventsetp,	/* in kernel space! */
-			u_int		*nelemp);		/* in kernel space! */
+			u_int		*nelemp);	/* in kernel space! */
 
 typedef int	(*dm_fsys_get_fileattr_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			u_int		mask,
 			dm_stat_t	*statp);
 
 typedef int	(*dm_fsys_get_region_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			u_int		nelem,
 			dm_region_t	*regbufp,
 			u_int		*nelemp);
 
 typedef int	(*dm_fsys_getall_dmattr_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			size_t		buflen,
 			void		*bufp,
 			size_t		*rlenp);
 
 typedef int	(*dm_fsys_getall_inherit_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			u_int		nelem,
 			dm_inherit_t	*inheritbufp,
 			u_int		*nelemp);
 
 typedef int	(*dm_fsys_init_attrloc_t)(
-			vnode_t		*vp,	/* sometimes root vnode */
+			struct inode	*ip,	/* sometimes root inode */
 			dm_right_t	right,
 			dm_attrloc_t	*locp);
 
 typedef int	(*dm_fsys_mkdir_by_handle_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			void		*hanp,
 			size_t		hlen,
 			char		*cname);
 
 typedef int	(*dm_fsys_probe_hole_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			dm_off_t	off,
 			dm_size_t	len,
@@ -336,13 +360,13 @@ typedef int	(*dm_fsys_probe_hole_t)(
 			dm_size_t	*rlenp);
 
 typedef int	(*dm_fsys_punch_hole_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			dm_off_t	off,
 			dm_size_t	len);
 
 typedef int	(*dm_fsys_read_invis_rvp_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			dm_off_t	off,
 			dm_size_t	len,
@@ -350,25 +374,25 @@ typedef int	(*dm_fsys_read_invis_rvp_t)(
 			int		*rvp);
 
 typedef int	(*dm_fsys_release_right_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			u_int		type);
 
 typedef int	(*dm_fsys_remove_dmattr_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			int		setdtime,
 			dm_attrname_t	*attrnamep);
 
 typedef int	(*dm_fsys_request_right_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			u_int		type,	/* DM_FSYS_OBJ or zero */
 			u_int		flags,
 			dm_right_t	newright);
 
 typedef int	(*dm_fsys_set_dmattr_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			dm_attrname_t	*attrnamep,
 			int		setdtime,
@@ -376,33 +400,33 @@ typedef int	(*dm_fsys_set_dmattr_t)(
 			void		*bufp);
 
 typedef int	(*dm_fsys_set_eventlist_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			u_int		type,
 			dm_eventset_t	*eventsetp,	/* in kernel space! */
 			u_int		maxevent);
 
 typedef int	(*dm_fsys_set_fileattr_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			u_int		mask,
 			dm_fileattr_t	*attrp);
 
 typedef int	(*dm_fsys_set_inherit_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			dm_attrname_t	*attrnamep,
 			mode_t		mode);
 
 typedef int	(*dm_fsys_set_region_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			u_int		nelem,
 			dm_region_t	*regbufp,
 			dm_boolean_t	*exactflagp);
 
 typedef int	(*dm_fsys_symlink_by_handle_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			void		*hanp,
 			size_t		hlen,
@@ -410,16 +434,16 @@ typedef int	(*dm_fsys_symlink_by_handle_t)(
 			char		*path);
 
 typedef int	(*dm_fsys_sync_by_handle_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right);
 
 typedef int	(*dm_fsys_upgrade_right_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
-			u_int		type);		/* DM_FSYS_OBJ or zero */
+			u_int		type);	/* DM_FSYS_OBJ or zero */
 
 typedef int	(*dm_fsys_write_invis_rvp_t)(
-			vnode_t		*vp,
+			struct inode	*ip,
 			dm_right_t	right,
 			int		flags,
 			dm_off_t	off,
@@ -428,7 +452,7 @@ typedef int	(*dm_fsys_write_invis_rvp_t)(
 			int		*rvp);
 
 typedef void	(*dm_fsys_obj_ref_hold_t)(
-			vnode_t		*vp);
+			struct inode	*ip);
 
 
 /* Structure definitions used by the VFS_DMAPI_FSYS_VECTOR call. */

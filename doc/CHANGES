@@ -1,3 +1,7 @@
+dmapi-2.2.1 (29 September 2004)
+	- Update m4 macros, incorporating some portability changes.
+	- Sync up with changes to the kernel DMAPI headers.
+
 dmapi-2.2.0 (21 April 2004)
 	- The linux 2.6 kernel puts the dmapi device at /dev/dmapi.
 

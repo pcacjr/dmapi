@@ -456,13 +456,13 @@ typedef struct dm_stat	dm_stat_t;
 
 /* Flags for the non-standard dt_xfs_xflags field. */
 
-#define DM_XFLAG_REALTIME	0x1
-#define DM_XFLAG_PREALLOC	0x2
-#define DM_XFLAG_IMMUTABLE	0x3
-#define DM_XFLAG_APPEND		0x4
-#define DM_XFLAG_SYNC		0x5
-#define DM_XFLAG_NOATIME	0x6
-#define DM_XFLAG_NODUMP		0x7
+#define DM_XFLAG_REALTIME	0x00000001
+#define DM_XFLAG_PREALLOC	0x00000002
+#define DM_XFLAG_IMMUTABLE	0x00000008
+#define DM_XFLAG_APPEND		0x00000010
+#define DM_XFLAG_SYNC		0x00000020
+#define DM_XFLAG_NOATIME	0x00000040
+#define DM_XFLAG_NODUMP		0x00000080
 #define DM_XFLAG_HASATTR	0x80000000
 
 
@@ -479,6 +479,40 @@ struct	dm_xstat {				/* not supported */
 };
 typedef struct dm_xstat dm_xstat_t;
 
+
+#define MAXDMFSFIDSZ	46
+
+typedef struct dm_fsfid {
+	__u16		fid_len;		/* length of data in bytes */
+	unsigned char	fid_data[MAXDMFSFIDSZ];	/* data (fid_len worth)  */
+} dm_fsfid_t;
+
+struct dm_fid {
+	__u16	dm_fid_len;		/* length of remainder	*/
+	__u16	dm_fid_pad;
+	__u32	dm_fid_gen;		/* generation number	*/
+	__u64	dm_fid_ino;		/* 64 bits inode number */
+};
+typedef struct dm_fid dm_fid_t;
+
+
+struct dm_handle {
+	union {
+		__s64	    align;	/* force alignment of ha_fid	 */
+		dm_fsid_t  _ha_fsid;	/* unique file system identifier */
+	} ha_u;
+	dm_fid_t	ha_fid;		/* file system specific file ID	 */
+};
+typedef struct dm_handle dm_handle_t;
+#define ha_fsid ha_u._ha_fsid
+
+#define DM_HSIZE(handle)	(((char *) &(handle).ha_fid.dm_fid_pad	 \
+				 - (char *) &(handle))			  \
+				 + (handle).ha_fid.dm_fid_len)
+
+#define DM_HANDLE_CMP(h1, h2)	memcmp(h1, h2, sizeof(dm_handle_t))
+
+#define DM_FSHSIZE		sizeof(dm_fsid_t)
 
 
 /* The following list provides the prototypes for all functions defined in
