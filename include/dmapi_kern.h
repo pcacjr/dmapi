@@ -33,8 +33,6 @@
 #ifndef __DMAPI_KERN_H__
 #define __DMAPI_KERN_H__
 
-#include <linux/fs.h>
-
 union sys_dmapi_uarg {
 	void *p;
 	__u64 u;
