@@ -1,19 +1,21 @@
-dnl aclocal.m4 generated automatically by aclocal 1.4
+# aclocal.m4 generated automatically by aclocal 1.6.3 -*- Autoconf -*-
 
-dnl Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
+# Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002
+# Free Software Foundation, Inc.
+# This file is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
 
-dnl This program is distributed in the hope that it will be useful,
-dnl but WITHOUT ANY WARRANTY, to the extent permitted by law; without
-dnl even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-dnl PARTICULAR PURPOSE.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
 
 # 
 # Generic macro, sets up all of the global packaging variables.
 # The following environment variables may be set to override defaults:
 #   DEBUG OPTIMIZER MALLOCLIB PLATFORM DISTRIBUTION INSTALL_USER INSTALL_GROUP
+#   BUILD_VERSION
 #
 AC_DEFUN([AC_PACKAGE_GLOBALS],
   [ pkg_name="$1"
@@ -23,6 +25,7 @@ AC_DEFUN([AC_PACKAGE_GLOBALS],
     pkg_version=${PKG_MAJOR}.${PKG_MINOR}.${PKG_REVISION}
     AC_SUBST(pkg_version)
     pkg_release=$PKG_BUILD
+    test -z "$BUILD_VERSION" || pkg_release="$BUILD_VERSION"
     AC_SUBST(pkg_release)
 
     DEBUG=${DEBUG:-'-DDEBUG'}		dnl  -DNDEBUG
@@ -88,7 +91,7 @@ AC_DEFUN([AC_PACKAGE_UTILITIES],
     AC_PACKAGE_NEED_UTILITY($1, "$make", make, [GNU make])
 
     if test -z "$LIBTOOL"; then
-        AC_PATH_PROG(LIBTOOL, libtool,,/usr/bin)
+	AC_PATH_PROG(LIBTOOL, libtool,,/usr/bin:/usr/local/bin)
     fi
     libtool=$LIBTOOL
     AC_SUBST(libtool)
@@ -170,17 +173,69 @@ AC_DEFUN([AC_PACKAGE_UTILITIES],
     AC_SUBST(rpmbuild)
   ])
 
+AC_DEFUN([AC_PACKAGE_NEED_XFS_LIBXFS_H],
+  [ AC_CHECK_HEADERS([xfs/libxfs.h])
+    if test "$ac_cv_header_xfs_libxfs_h" != "yes"; then
+        echo
+        echo 'FATAL ERROR: XFS header <xfs/libxfs.h> does not exist.'
+        echo 'Install the XFS programs (xfsprogs) development package.'
+        echo 'Alternatively, run "make install-dev" from the xfsprogs source.'
+        exit 1
+    fi
+  ])
+
 AC_DEFUN([AC_PACKAGE_NEED_XFS_HANDLE_H],
   [ AC_CHECK_HEADERS([xfs/handle.h])
     if test "$ac_cv_header_xfs_handle_h" != "yes"; then
         echo
         echo 'FATAL ERROR: XFS header <xfs/handle.h> does not exist.'
-	echo 'Install the XFS programs (xfsprogs) development package.'
-	echo 'Alternatively, run "make install-dev" from the xfsprogs source.'
+        echo 'Install the XFS programs (xfsprogs) development package.'
+        echo 'Alternatively, run "make install-dev" from the xfsprogs source.'
         exit 1
     fi
   ])
 
+AC_DEFUN([AC_PACKAGE_NEED_LIBXFSINIT_LIBXFS],
+  [ AC_CHECK_LIB(xfs, libxfs_init,, [
+        echo
+        echo 'FATAL ERROR: could not find a valid XFS base library.'
+        echo 'Install the XFS programs (xfsprogs) library package.'
+        echo 'Alternatively, run "make install-dev" from the xfsprogs source.'
+        exit 1
+    ])
+    libxfs="-lxfs"
+    test -f `pwd`/../xfsprogs/libxfs/libxfs.la && \
+        libxfs="`pwd`/../xfsprogs/libxfs/libxfs.la"
+    test -f /usr/lib/libxfs.la && libxfs="/usr/lib/libxfs.la"
+    AC_SUBST(libxfs)
+  ])
+
+AC_DEFUN([AC_PACKAGE_NEED_ATTRLIST_LIBHANDLE],
+  [ AC_CHECK_LIB(handle, attr_list_by_handle,, [
+        echo
+        echo 'FATAL ERROR: could not find a current XFS handle library.'
+        echo 'Install the XFS programs (xfsprogs) library package.'
+        echo 'Alternatively, run "make install-lib" from the xfsprogs source.'
+        exit 1
+    ])
+    libhdl="-lhandle"
+    test -f `pwd`/../xfsprogs/libhandle/libhandle.la && \
+        libhdl="`pwd`/../xfsprogs/libhandle/libhandle.la"
+    test -f /usr/lib/libhandle.la && libhdl="/usr/lib/libhandle.la"
+    AC_SUBST(libhdl)
+  ])
+
+AC_DEFUN([AC_PACKAGE_NEED_XFSCTL_MACRO],
+  [ AC_MSG_CHECKING([xfsctl from xfs/libxfs.h])
+    AC_TRY_LINK([#include <xfs/libxfs.h>], [ int x = xfsctl(0, 0, 0, 0); ],
+      [ echo ok ],
+      [ echo
+        echo 'FATAL ERROR: cannot find required macros in the XFS headers.'
+        echo 'Upgrade your XFS programs (xfsprogs) development package.'
+        echo 'Alternatively, run "make install-dev" from the xfsprogs source.'
+        exit 1
+      ])
+  ])
 
 # 
 # Find format of installed man pages.
