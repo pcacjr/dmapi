@@ -38,8 +38,14 @@ include $(TOPDIR)/include/builddefs
 endif
 
 CONFIGURE = configure include/builddefs
+LIBTOOL_LSRCFILES = config.guess config.sub ltmain.sh ltconfig \
+		aclocal.m4
+LIBTOOL_DIRT = libtool
 LSRCFILES = configure configure.in Makepkgs install-sh README VERSION
-LDIRT = config.* conftest* Logs/* built install.* install-dev.* *.gz
+LSRCFILES += $(LIBTOOL_LSRCFILES)
+LDIRT = config.log config.status config.cache confdefs.h conftest* \
+	configure Logs/* built install.* install-dev.* *.gz \
+	$(LIBTOOL_DIRT)
 
 SUBDIRS = include libdm man doc debian build
 

@@ -3,6 +3,11 @@ AC_INIT(include/dmapi.h)
 pkg_name="dmapi"
 AC_SUBST(pkg_name)
 
+# For libtool
+AC_PROG_LIBTOOL
+AC_SUBST(LIBTOOL_DEPS)
+AC_SUBST(enable_shared)
+
 #
 # Note: the following environment variables may be set to override the
 # defaults (to change paths and/or executables, build parameters, etc):
@@ -34,6 +39,12 @@ pkg_version=${PKG_MAJOR}.${PKG_MINOR}.${PKG_REVISION}
 pkg_release=$PKG_BUILD
 AC_SUBST(pkg_version)
 AC_SUBST(pkg_release)
+
+# For libtool versioning.
+pkg_lt_version=${PKG_LT_CURRENT}.${PKG_LT_REVISION}.${PKG_LT_AGE}
+pkg_lt_current=$PKG_LT_CURRENT
+AC_SUBST(pkg_lt_version)
+AC_SUBST(pkg_lt_current)
 
 pkg_distribution="SGI ProPack"
 test -z "$DISTRIBUTION" || pkg_distribution="$DISTRIBUTION"
@@ -156,6 +167,13 @@ AC_SUBST(pkg_doc_dir)
 dnl
 dnl output files
 dnl
+
+#For libtool, from section 5.4.2 of the libtool manual.  Just in
+# case we ever need them.
+LTLIBOBJS=`echo "$LIBOBJS" | sed 's/\.[^.]* /.lo /g;s/\.[^.]*$/.lo/'`
+AC_SUBST(LTLIBOBJS)
+LTALLOCA=`echo "$ALLOCA" | sed 's/\.[^.]* /.lo /g;s/\.[^.]*$/.lo/'`
+AC_SUBST(LTALLOCA)
 
 AC_OUTPUT( \
 dnl  Build definitions for use in Makefiles

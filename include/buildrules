@@ -46,6 +46,17 @@ $(STATICLIBTARGET) : $(SUBDIRS) $(OBJECTS)
 	$(AR) crf $(STATICLIBTARGET) $?
 endif
 
+# For libtool.  Pieces from Automake, slightly modified.
+ifdef LTLIBRARY
+
+$(LTLIBRARY) : $(SUBDIRS) $(LTOBJECTS)
+	$(LINK) $(LDFLAGS) -o $(LTLIBRARY) $(LTOBJECTS) $(LDLIBS)
+
+%.lo: %.c
+	$(LTCOMPILE) -c $<
+
+endif # LTLIBRARY
+
 clean clobber : $(SUBDIRS)
 	rm -f $(DIRT)
 	$(SUBDIRS_MAKERULE)

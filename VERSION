@@ -5,3 +5,12 @@ PKG_MAJOR=0
 PKG_MINOR=1
 PKG_REVISION=1
 PKG_BUILD=0
+
+
+
+# Libtool versioning <PKG_LT_CURRENT:PKG_LT_REVISION:PKG_LT_AGE>.
+# These numbers refer to the library's interface, and have nothing to do with
+# the version of the package.  See chapter 6 of the Libtool manual.
+PKG_LT_CURRENT=0
+PKG_LT_REVISION=0
+PKG_LT_AGE=0

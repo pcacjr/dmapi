@@ -55,6 +55,8 @@ PKG_SLIB_DIR = @pkg_slib_dir@
 PKG_INC_DIR = @pkg_inc_dir@
 PKG_MAN_DIR = @pkg_man_dir@
 PKG_DOC_DIR = @pkg_doc_dir@
+PKG_LT_VERSION = @pkg_lt_version@
+PKG_LT_CURRENT = @pkg_lt_current@
 
 # LCFLAGS, LLDFLAGS, LLDLIBS, LSRCFILES and LDIRT may be specified in
 # user Makefiles. Note: LSRCFILES is anything other than Makefile, $(CFILES)
@@ -103,6 +105,55 @@ HAVE_ZIPPED_MANPAGES = @have_zipped_manpages@
 SHELL = /bin/sh
 IMAGES_DIR = $(TOPDIR)/all-images
 DIST_DIR = $(TOPDIR)/dist
+
+# For libtool.  Pieces from Automake, slightly modified.
+top_builddir = $(TOPDIR)
+LIBTOOL	= @LIBTOOL@
+LINK = $(LIBTOOL) --mode=link $(CC)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CCF)
+LIBTOOL_DEPS = @LIBTOOL_DEPS@
+LTOBJECTS = $(OBJECTS:.o=.lo)
+DIRT += $(LTOBJECTS) $(LTLIBRARY) .libs/*
+ENABLE_SHARED = @enable_shared@
+ifeq ($(ENABLE_SHARED),yes)
+LDFLAGS += -rpath $(PKG_LIB_DIR) 
+LDFLAGS += -version-info $(subst .,:,$(PKG_LT_VERSION))
+endif
+LIBNAME = $(basename $(LTLIBRARY))
+
+# Remove things from the manifest that do not belong in the normal install.
+# This is cleanup after libtool --mode=install.
+LT_INSTALL_FILTER = \
+	if test "$(DIST_MANIFEST)" != ""; then \
+		perl -i -ne 'print unless /$(LIBNAME).(so|a|la)$$/' $(DIST_MANIFEST); \
+	fi
+
+
+# Remove things from the manifest that do not belong in the devel install.
+# This is cleanup after libtool --mode=install.
+LT_DEV_INSTALL_FILTER = \
+	if test "$(DIST_MANIFEST)" != ""; then \
+		perl -i -ane 'print unless $$F[-1] =~ /$(LIBNAME).so./' $(DIST_MANIFEST); \
+	fi
+
+
+# Update manifest with the symlinks that libtool made for us.
+LT_INSTALL_SYMLINKS = \
+	if test "$(DIST_MANIFEST)" != "" && \
+	   test -f $(DIST_ROOT)$(PKG_LIB_DIR)/$(LIBNAME).so.$(PKG_LT_VERSION); then \
+		$(INSTALL) -S $(LIBNAME).so.$(PKG_LT_VERSION) $(PKG_LIB_DIR)/$(LIBNAME).so.$(PKG_LT_CURRENT); \
+		$(INSTALL) -S $(LIBNAME).so.$(PKG_LT_VERSION) $(PKG_LIB_DIR)/$(LIBNAME).so; \
+	fi
+
+
+# Tell libtool to install the library.
+LT_INSTALL = \
+	@list='$(LTLIBRARY)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo $(LIBTOOL) --mode=install $(INSTALL) $$p $(DIST_ROOT)$(PKG_LIB_DIR)/$$p; \
+	    $(LIBTOOL) --mode=install $(INSTALL) $$p $(DIST_ROOT)$(PKG_LIB_DIR)/$$p; \
+	  fi; \
+	done
 
 SUBDIRS_MAKERULE = \
 	@for d in $(SUBDIRS) ""; do \
