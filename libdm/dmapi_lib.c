@@ -50,7 +50,7 @@ static int dmapi_fd = -1;
 int
 dmi_init_service( char *versionstr )
 {
-	dmapi_fd = open( "/proc/fs/xfs_dmapi_v1", O_RDWR );
+	dmapi_fd = open( "/proc/fs/xfs_dmapi_v2", O_RDWR );
 	if( dmapi_fd == -1 )
 		return -1;
 	return 0;
@@ -368,9 +368,10 @@ dmi( int opcode, ... )
 		break;
 /* dm_handle2path */
 	case DM_OPEN_BY_HANDLE:
-		DM_Parg(u,1) = Parg(void*);
-		DM_Uarg(u,2) = Uarg(size_t);
-		DM_Uarg(u,3) = Uarg(int);
+		DM_Uarg(u,1) = Uarg(unsigned int);
+		DM_Parg(u,2) = Parg(void*);
+		DM_Uarg(u,3) = Uarg(size_t);
+		DM_Uarg(u,4) = Uarg(int);
 		break;
 /* dm_hole */
 	case DM_GET_ALLOCINFO:

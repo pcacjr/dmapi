@@ -31,6 +31,7 @@
  * http://oss.sgi.com/projects/GenInfo/SGIGPLNoticeExplan/
  */
 
+#include <stdio.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -38,6 +39,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <mntent.h>
 #ifdef linux
 #include <linux/types.h>
 #include <unistd.h>
@@ -53,28 +55,9 @@
 #include "dmapi_lib.h"
 
 
-/* Originally this routine called SGI_OPEN_BY_HANDLE on the target object, did
-   a fstat on it, then searched for the matching inode number in the directory
-   pointed to by dirhanp.  There were a couple of problems with this.
-   1. dm_handle_to_path is supposed to work for symlink target objects, but
-      didn't because SGI_OPEN_BY_HANDLE only works for files and directories.
-   2. The wrong pathname was sometimes returned if dirhanp and targhanp pointed
-      to the same directory (a common request) because ".", ".." and/or various
-      subdirectories could all be mount points and therefore all have the same
-      inode number of 128.
-   3. dm_handle_to_path wouldn't work if targhanp was a mount point because
-      routine getcomp() sees only the mounted-on directory, not the mount point.
-
-   This rework of dm_handle_to_path fixes all these problems, but at a price,
-   because routine getcomp() must make one system call per directory entry.
-   Someday these two methods should be combined.  If an SGI_OPEN_BY_HANDLE of
-   targhanp works and if both dirhanp and targhanp have the same dev_t, then
-   use the old method, otherwise use the current method.  This will remove
-   the system call overhead in nearly all cases.
-*/
-
 static int getcomp(int dirfd, void *targhanp, size_t targhlen,
 			char *bufp, size_t buflen, size_t *rlenp);
+static char *get_mnt(void *fshanp, size_t fshlen);
 
 
 extern int
@@ -90,6 +73,10 @@ dm_handle_to_path(
 	int		dirfd = -1;	/* fd for parent directory */
 	int		origfd = -1;	/* fd for current working directory */
 	int		err;		/* a place to save errno */
+	int		mfd;
+	char		*mtpt = NULL;
+	void		*fshanp;
+	size_t		fshlen;
 
 	if (buflen == 0) {
 		errno = EINVAL;
@@ -99,14 +86,31 @@ dm_handle_to_path(
 		errno = EFAULT;
 		return -1;
 	}
-	if ((origfd = open(".", O_RDONLY)) < 0)
+	if (dm_handle_to_fshandle(dirhanp, dirhlen, &fshanp, &fshlen)) {
+		errno = EINVAL;
+		return -1;
+	}
+	if ((origfd = open(".", O_RDONLY)) < 0) {
+		dm_handle_free(fshanp, fshlen);
 		return -1;	/* leave errno set from open */
+	}
 
-#ifdef linux
-	dirfd = dmi(DM_OPEN_BY_HANDLE, dirhanp, dirhlen, O_RDONLY);
-#else
-	dirfd = (int)syssgi(SGI_OPEN_BY_HANDLE, dirhanp, dirhlen, O_RDONLY);
-#endif
+	if ((mtpt = get_mnt(fshanp, fshlen)) == NULL) {
+		errno = EINVAL;
+		dm_handle_free(fshanp, fshlen);
+		close(origfd);
+		return -1;
+	}
+
+	if((mfd = open(mtpt, O_RDONLY)) < 0) {
+		dm_handle_free(fshanp, fshlen);
+		close(origfd);
+		free(mtpt);
+		return -1;
+	}
+
+	dirfd = dmi(DM_OPEN_BY_HANDLE, mfd, dirhanp, dirhlen, O_RDONLY);
+
 	if (dirfd < 0) {
 		err = errno;
 	} else if (fchdir(dirfd)) {
@@ -160,6 +164,9 @@ dm_handle_to_path(
 		(void) fchdir(origfd);	/* can't do anything about a failure */
 	}
 
+	dm_handle_free(fshanp, fshlen);
+	free(mtpt);
+	close(mfd);
 	if (origfd >= 0)
 		(void)close(origfd);
 	if (dirfd >= 0)
@@ -181,7 +188,7 @@ dm_handle_to_path(
    Returns zero if successful, an appropriate errno if not.
 */
 
-#define READDIRSZ	16384	/* 6.x kernels use 16k buffer */
+#define READDIRSZ	16384
 
 static int
 getcomp(
@@ -302,4 +309,53 @@ getcomp(
 
 	*rlenp = totlen;		/* success! */
 	return(0);
+}
+
+
+static char *
+get_mnt(
+	void	*fshanp,
+	size_t	fshlen)
+{
+	FILE		*file;
+	struct mntent	*mntent;
+	char		*mtpt = NULL;
+	void		*hanp;
+	size_t		hlen;
+
+	if ((file = setmntent("/etc/mtab", "r")) == NULL)
+		return NULL;
+
+	while((mntent = getmntent(file)) != NULL) {
+
+		/* skip anything that isn't xfs */
+		if (strcmp("xfs", mntent->mnt_type) != 0)
+			continue;
+
+		/* skip root dir */
+		if (strcmp("/", mntent->mnt_dir) == 0)
+			continue;
+
+		/* skip anything that isn't dmapi */
+		if ((hasmntopt(mntent, "dmapi") == 0) &&
+		    (hasmntopt(mntent, "xdsm") == 0)) {
+			continue;
+		}
+
+		/* skip anything that won't report a handle */
+		if (dm_path_to_fshandle(mntent->mnt_dir, &hanp, &hlen))
+			continue;
+
+		/* is this a match? */
+		if (dm_handle_cmp(fshanp, fshlen, hanp, hlen) == 0) {
+			/* yes */
+			mtpt = strdup(mntent->mnt_dir);
+		}
+		dm_handle_free(hanp, hlen);
+
+		if (mtpt)
+			break;
+	}
+	endmntent(file);
+	return mtpt;
 }

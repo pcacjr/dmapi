@@ -23,7 +23,7 @@ by the libdm library.
 %package devel
 Summary: Data Management API static libraries and headers.
 Group: Development/Libraries
-Requires: @pkg_name@ >= 2.0.3
+Requires: @pkg_name@ >= 2.0.4
 
 %description devel
 dmapi-devel contains the libraries and header files needed to
