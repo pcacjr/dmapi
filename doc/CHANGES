@@ -1,3 +1,6 @@
+dmapi-2.0.3 (12 June 2002)
+	- kernel-library interface has changed, now 64bit safe.
+
 dmapi-2.0.2 (13 April 2002)
 	- Minor build system updates
 

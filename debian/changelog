@@ -1,8 +1,9 @@
 dmapi (2.0.3-1) unstable; urgency=low
 
-  * kernel-library interface is changed, now 64bit safe.
+  * New upstream release
+  * kernel-library interface has changed, now 64bit safe
 
- -- Dean Roehrich <roehrich@sgi.com>  Wed, 12 Jun 2002 09:44:06
+ -- Nathan Scott <nathans@debian.org>  Thu, 13 Jun 2002 09:13:23 +1000
 
 dmapi (2.0.2-1) unstable; urgency=low
 
