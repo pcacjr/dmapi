@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995-2002 Silicon Graphics, Inc.  All Rights Reserved.
+ * Copyright (c) 1995-2003 Silicon Graphics, Inc.  All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2.1 of the GNU Lesser General Public License
@@ -31,8 +31,8 @@
  * http://oss.sgi.com/projects/GenInfo/SGIGPLNoticeExplan/
  */
 
-#ifndef _SYS_DMAPI_H
-#define _SYS_DMAPI_H
+#ifndef __DMAPI_H__
+#define __DMAPI_H__
 
 #ifdef	__cplusplus
 extern	"C" {
@@ -248,6 +248,8 @@ struct dm_dispinfo {
 typedef struct dm_dispinfo	dm_dispinfo_t;
 
 
+#ifndef HAVE_DM_EVENTTYPE_T
+#define HAVE_DM_EVENTTYPE_T
 typedef enum {
 	DM_EVENT_INVALID	= -1,
 	DM_EVENT_CANCEL		= 0,		/* not supported */
@@ -275,6 +277,7 @@ typedef enum {
 	DM_EVENT_USER		= 22,
 	DM_EVENT_MAX		= 23
 } dm_eventtype_t;
+#endif
 
 
 struct dm_eventmsg {
@@ -389,11 +392,14 @@ typedef enum {
 } dm_response_t;
 
 
+#ifndef HAVE_DM_RIGHT_T
+#define HAVE_DM_RIGHT_T
 typedef enum {
 	DM_RIGHT_NULL,
 	DM_RIGHT_SHARED,
 	DM_RIGHT_EXCL
 } dm_right_t;
+#endif
 
 
 struct dm_stat {
@@ -1039,5 +1045,4 @@ dm_get_dioinfo(
 }
 #endif
 
-#endif /* _SYS_DMAPI_H */
-
+#endif /* __DMAPI_H__ */
