@@ -1,3 +1,8 @@
+dmapi-2.0.6 (27 March 2003)
+	- Cleanups to the build process, in particular the automatic
+	  rpm package generation Makefile and spec file template.
+	- Makepkgs script can now propagate failures back from make.
+
 dmapi-2.0.5 (04 July 2002)
 	- Build infrastructure updates so that configure options can be
 	  used to specify paths rather than semi-hard-coded path names
