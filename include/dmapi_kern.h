@@ -1,32 +1,32 @@
 /*
  * Copyright (c) 2000-2002 Silicon Graphics, Inc.  All Rights Reserved.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it would be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * Further, this software is distributed without any warranty that it is
  * free of the rightful claim of any third person regarding infringement
- * or the like.  Any license provided herein, whether implied or
+ * or the like.	 Any license provided herein, whether implied or
  * otherwise, applies only to this software file.  Patent licenses, if
  * any, provided herein do not apply to combinations of this program with
  * other software, or any other product whatsoever.
- * 
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write the Free Software Foundation, Inc., 59
  * Temple Place - Suite 330, Boston MA 02111-1307, USA.
- * 
+ *
  * Contact information: Silicon Graphics, Inc., 1600 Amphitheatre Pkwy,
  * Mountain View, CA  94043, or:
- * 
- * http://www.sgi.com 
- * 
- * For further information regarding this notice, see: 
- * 
+ *
+ * http://www.sgi.com
+ *
+ * For further information regarding this notice, see:
+ *
  * http://oss.sgi.com/projects/GenInfo/SGIGPLNoticeExplan/
  */
 
@@ -62,27 +62,27 @@ struct xfs_handle_t;
    dm_send_unmount_event(), and dm_send_namesp_event() calls.
 */
 
-#define	DM_FLAGS_NDELAY		0x001	/* return EAGAIN after dm_pending() */
-#define	DM_FLAGS_UNWANTED	0x002	/* event not in fsys dm_eventset_t */
+#define DM_FLAGS_NDELAY		0x001	/* return EAGAIN after dm_pending() */
+#define DM_FLAGS_UNWANTED	0x002	/* event not in fsys dm_eventset_t */
 
 /* Possible code levels reported by dm_code_level(). */
 
-#define	DM_CLVL_INIT	0	/* DMAPI prior to X/Open compliance */
-#define	DM_CLVL_XOPEN	1	/* X/Open compliant DMAPI */
+#define DM_CLVL_INIT	0	/* DMAPI prior to X/Open compliance */
+#define DM_CLVL_XOPEN	1	/* X/Open compliant DMAPI */
 
 
 /* Prototypes used outside of the DMI module/directory. */
 
 int		dm_send_data_event(
 			dm_eventtype_t	event,
-			struct bhv_desc	*bdp,
+			struct bhv_desc *bdp,
 			dm_right_t	vp_right,
 			off_t		off,
 			size_t		len,
 			int		flags);
 
 int		dm_send_destroy_event(
-			struct bhv_desc	*bdp,
+			struct bhv_desc *bdp,
 			dm_right_t	vp_right);
 
 int		dm_send_mount_event(
@@ -97,9 +97,9 @@ int		dm_send_mount_event(
 
 int		dm_send_namesp_event(
 			dm_eventtype_t	event,
-			struct bhv_desc	*bdp1,
+			struct bhv_desc *bdp1,
 			dm_right_t	vp1_right,
-			struct bhv_desc	*bdp2,
+			struct bhv_desc *bdp2,
 			dm_right_t	vp2_right,
 			char		*name1,
 			char		*name2,
@@ -122,7 +122,7 @@ int		dm_vp_to_handle (
 			xfs_handle_t	*handlep);
 
 /* The following prototypes and definitions are used by DMAPI as its
-   interface into the filesystem code.  Communication between DMAPI and the
+   interface into the filesystem code.	Communication between DMAPI and the
    filesystem are established as follows:
    1. DMAPI uses the VFS_DMAPI_FSYS_VECTOR to ask for the addresses
       of all the functions within the filesystem that it may need to call.
@@ -182,32 +182,32 @@ typedef enum {
 } dm_fsys_switch_t;
 
 
-#define	DM_FSYS_OBJ	0x1		/* object refers to a fsys handle */
+#define DM_FSYS_OBJ	0x1		/* object refers to a fsys handle */
 
 
 /*
  *  Prototypes for filesystem-specific functions.
  */
 
-typedef	int	(*dm_fsys_clear_inherit_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_clear_inherit_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			dm_attrname_t	*attrnamep);
 
-typedef	int	(*dm_fsys_create_by_handle_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_create_by_handle_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			void		*hanp,
 			size_t		hlen,
 			char		*cname);
 
-typedef	int	(*dm_fsys_downgrade_right_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_downgrade_right_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		type);		/* DM_FSYS_OBJ or zero */
 
-typedef	int	(*dm_fsys_get_allocinfo_rvp_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_get_allocinfo_rvp_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			dm_off_t	*offp,
 			u_int		nelem,
@@ -215,8 +215,8 @@ typedef	int	(*dm_fsys_get_allocinfo_rvp_t)(
 			u_int		*nelemp,
 			int		*rvalp);
 
-typedef	int 	(*dm_fsys_get_bulkall_rvp_t)(
-			bhv_desc_t	*bdp,		/* root vnode */
+typedef int	(*dm_fsys_get_bulkall_rvp_t)(
+			vnode_t		*vp,		/* root vnode */
 			dm_right_t	right,
 			u_int		mask,
 			dm_attrname_t	*attrnamep,
@@ -226,8 +226,8 @@ typedef	int 	(*dm_fsys_get_bulkall_rvp_t)(
 			size_t		*rlenp,
 			int		*rvalp);
 
-typedef	int 	(*dm_fsys_get_bulkattr_rvp_t)(
-			bhv_desc_t	*bdp,		/* root vnode */
+typedef int	(*dm_fsys_get_bulkattr_rvp_t)(
+			vnode_t		*vp,		/* root vnode */
 			dm_right_t	right,
 			u_int		mask,
 			dm_attrloc_t	*locp,
@@ -236,33 +236,33 @@ typedef	int 	(*dm_fsys_get_bulkattr_rvp_t)(
 			size_t		*rlenp,
 			int		*rvalp);
 
-typedef	int	(*dm_fsys_get_config_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_get_config_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			dm_config_t	flagname,
 			dm_size_t	*retvalp);
 
-typedef	int	(*dm_fsys_get_config_events_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_get_config_events_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		nelem,
 			dm_eventset_t	*eventsetp,
 			u_int		*nelemp);
 
-typedef	int	(*dm_fsys_get_destroy_dmattr_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_get_destroy_dmattr_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			dm_attrname_t	*attrnamep,
 			char		**valuepp,
 			int		*vlenp);
 
-typedef	int	(*dm_fsys_get_dioinfo_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_get_dioinfo_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			dm_dioinfo_t	*diop);
 
-typedef	int	(*dm_fsys_get_dirattrs_rvp_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_get_dirattrs_rvp_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		mask,
 			dm_attrloc_t	*locp,
@@ -271,154 +271,154 @@ typedef	int	(*dm_fsys_get_dirattrs_rvp_t)(
 			size_t		*rlenp,
 			int		*rvalp);
 
-typedef	int	(*dm_fsys_get_dmattr_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_get_dmattr_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			dm_attrname_t	*attrnamep,
 			size_t		buflen,
 			void		*bufp,
 			size_t		*rlenp);
 
-typedef	int	(*dm_fsys_get_eventlist_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_get_eventlist_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		type,
 			u_int		nelem,
 			dm_eventset_t	*eventsetp,	/* in kernel space! */
 			u_int		*nelemp);		/* in kernel space! */
 
-typedef	int	(*dm_fsys_get_fileattr_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_get_fileattr_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		mask,
 			dm_stat_t	*statp);
 
-typedef	int	(*dm_fsys_get_region_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_get_region_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		nelem,
 			dm_region_t	*regbufp,
 			u_int		*nelemp);
 
-typedef	int	(*dm_fsys_getall_dmattr_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_getall_dmattr_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			size_t		buflen,
 			void		*bufp,
 			size_t		*rlenp);
 
-typedef	int	(*dm_fsys_getall_inherit_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_getall_inherit_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		nelem,
 			dm_inherit_t	*inheritbufp,
 			u_int		*nelemp);
 
-typedef	int	(*dm_fsys_init_attrloc_t)(
-			bhv_desc_t	*bdp,	/* sometimes root vnode */
+typedef int	(*dm_fsys_init_attrloc_t)(
+			vnode_t		*vp,	/* sometimes root vnode */
 			dm_right_t	right,
 			dm_attrloc_t	*locp);
 
-typedef	int	(*dm_fsys_mkdir_by_handle_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_mkdir_by_handle_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			void		*hanp,
 			size_t		hlen,
 			char		*cname);
 
-typedef	int	(*dm_fsys_probe_hole_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_probe_hole_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			dm_off_t	off,
 			dm_size_t	len,
 			dm_off_t	*roffp,
 			dm_size_t	*rlenp);
 
-typedef	int	(*dm_fsys_punch_hole_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_punch_hole_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			dm_off_t	off,
 			dm_size_t	len);
 
-typedef	int	(*dm_fsys_read_invis_rvp_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_read_invis_rvp_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			dm_off_t	off,
 			dm_size_t	len,
 			void		*bufp,
 			int		*rvp);
 
-typedef	int	(*dm_fsys_release_right_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_release_right_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		type);
 
-typedef	int	(*dm_fsys_remove_dmattr_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_remove_dmattr_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			int		setdtime,
 			dm_attrname_t	*attrnamep);
 
-typedef	int	(*dm_fsys_request_right_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_request_right_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		type,	/* DM_FSYS_OBJ or zero */
 			u_int		flags,
 			dm_right_t	newright);
 
-typedef	int	(*dm_fsys_set_dmattr_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_set_dmattr_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			dm_attrname_t	*attrnamep,
 			int		setdtime,
 			size_t		buflen,
 			void		*bufp);
 
-typedef	int	(*dm_fsys_set_eventlist_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_set_eventlist_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		type,
 			dm_eventset_t	*eventsetp,	/* in kernel space! */
 			u_int		maxevent);
 
-typedef	int	(*dm_fsys_set_fileattr_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_set_fileattr_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		mask,
 			dm_fileattr_t	*attrp);
 
-typedef	int	(*dm_fsys_set_inherit_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_set_inherit_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			dm_attrname_t	*attrnamep,
 			mode_t		mode);
 
-typedef	int	(*dm_fsys_set_region_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_set_region_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		nelem,
 			dm_region_t	*regbufp,
 			dm_boolean_t	*exactflagp);
 
-typedef	int	(*dm_fsys_symlink_by_handle_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_symlink_by_handle_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			void		*hanp,
 			size_t		hlen,
 			char		*cname,
 			char		*path);
 
-typedef	int	(*dm_fsys_sync_by_handle_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_sync_by_handle_t)(
+			vnode_t		*vp,
 			dm_right_t	right);
 
-typedef	int	(*dm_fsys_upgrade_right_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_upgrade_right_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			u_int		type);		/* DM_FSYS_OBJ or zero */
 
-typedef	int	(*dm_fsys_write_invis_rvp_t)(
-			bhv_desc_t	*bdp,
+typedef int	(*dm_fsys_write_invis_rvp_t)(
+			vnode_t		*vp,
 			dm_right_t	right,
 			int		flags,
 			dm_off_t	off,
@@ -428,7 +428,7 @@ typedef	int	(*dm_fsys_write_invis_rvp_t)(
 
 /* Structure definitions used by the VFS_DMAPI_FSYS_VECTOR call. */
 
-typedef	struct {
+typedef struct {
 	dm_fsys_switch_t  func_no;	/* function number */
 	union {
 		dm_fsys_clear_inherit_t clear_inherit;
@@ -489,69 +489,69 @@ typedef struct dm_fcntl_mapevent dm_fcntl_mapevent_t;
    library routines.
 */
 
-#define	DM_MAX_HANDLE_SIZE	56	/* maximum size for a file handle */
+#define DM_MAX_HANDLE_SIZE	56	/* maximum size for a file handle */
 
 
 /*
  *  Opcodes for dmapi ioctl.
  */
 
-#define	DM_CLEAR_INHERIT	1
-#define	DM_CREATE_BY_HANDLE	2
-#define	DM_CREATE_SESSION	3
-#define	DM_CREATE_USEREVENT	4
-#define	DM_DESTROY_SESSION	5
-#define	DM_DOWNGRADE_RIGHT	6
-#define	DM_FD_TO_HANDLE		7
-#define	DM_FIND_EVENTMSG	8
-#define	DM_GET_ALLOCINFO	9
-#define	DM_GET_BULKALL		10
-#define	DM_GET_BULKATTR		11
-#define	DM_GET_CONFIG		12
-#define	DM_GET_CONFIG_EVENTS	13
-#define	DM_GET_DIOINFO		14
-#define	DM_GET_DIRATTRS		15
-#define	DM_GET_DMATTR		16
-#define	DM_GET_EVENTLIST	17
-#define	DM_GET_EVENTS		18
-#define	DM_GET_FILEATTR		19
-#define	DM_GET_MOUNTINFO	20
-#define	DM_GET_REGION		21
-#define	DM_GETALL_DISP		22
-#define	DM_GETALL_DMATTR	23
-#define	DM_GETALL_INHERIT	24
-#define	DM_GETALL_SESSIONS	25
-#define	DM_GETALL_TOKENS	26
-#define	DM_INIT_ATTRLOC		27
-#define	DM_MKDIR_BY_HANDLE	28
-#define	DM_MOVE_EVENT		29
-#define	DM_OBJ_REF_HOLD		30
-#define	DM_OBJ_REF_QUERY	31
-#define	DM_OBJ_REF_RELE		32
-#define	DM_PATH_TO_FSHANDLE	33
-#define	DM_PATH_TO_HANDLE	34
-#define	DM_PENDING		35
-#define	DM_PROBE_HOLE		36
-#define	DM_PUNCH_HOLE		37
-#define	DM_QUERY_RIGHT		38
-#define	DM_QUERY_SESSION	39
-#define	DM_READ_INVIS		40
-#define	DM_RELEASE_RIGHT	41
-#define	DM_REMOVE_DMATTR	42
-#define	DM_REQUEST_RIGHT	43
-#define	DM_RESPOND_EVENT	44
-#define	DM_SEND_MSG		45
-#define	DM_SET_DISP		46
-#define	DM_SET_DMATTR		47
-#define	DM_SET_EVENTLIST	48
-#define	DM_SET_FILEATTR		49
-#define	DM_SET_INHERIT		50
-#define	DM_SET_REGION		51
-#define	DM_SET_RETURN_ON_DESTROY 52
-#define	DM_SYMLINK_BY_HANDLE	53
-#define	DM_SYNC_BY_HANDLE	54
-#define	DM_UPGRADE_RIGHT	55
-#define	DM_WRITE_INVIS		56
-#define	DM_OPEN_BY_HANDLE	57
+#define DM_CLEAR_INHERIT	1
+#define DM_CREATE_BY_HANDLE	2
+#define DM_CREATE_SESSION	3
+#define DM_CREATE_USEREVENT	4
+#define DM_DESTROY_SESSION	5
+#define DM_DOWNGRADE_RIGHT	6
+#define DM_FD_TO_HANDLE		7
+#define DM_FIND_EVENTMSG	8
+#define DM_GET_ALLOCINFO	9
+#define DM_GET_BULKALL		10
+#define DM_GET_BULKATTR		11
+#define DM_GET_CONFIG		12
+#define DM_GET_CONFIG_EVENTS	13
+#define DM_GET_DIOINFO		14
+#define DM_GET_DIRATTRS		15
+#define DM_GET_DMATTR		16
+#define DM_GET_EVENTLIST	17
+#define DM_GET_EVENTS		18
+#define DM_GET_FILEATTR		19
+#define DM_GET_MOUNTINFO	20
+#define DM_GET_REGION		21
+#define DM_GETALL_DISP		22
+#define DM_GETALL_DMATTR	23
+#define DM_GETALL_INHERIT	24
+#define DM_GETALL_SESSIONS	25
+#define DM_GETALL_TOKENS	26
+#define DM_INIT_ATTRLOC		27
+#define DM_MKDIR_BY_HANDLE	28
+#define DM_MOVE_EVENT		29
+#define DM_OBJ_REF_HOLD		30
+#define DM_OBJ_REF_QUERY	31
+#define DM_OBJ_REF_RELE		32
+#define DM_PATH_TO_FSHANDLE	33
+#define DM_PATH_TO_HANDLE	34
+#define DM_PENDING		35
+#define DM_PROBE_HOLE		36
+#define DM_PUNCH_HOLE		37
+#define DM_QUERY_RIGHT		38
+#define DM_QUERY_SESSION	39
+#define DM_READ_INVIS		40
+#define DM_RELEASE_RIGHT	41
+#define DM_REMOVE_DMATTR	42
+#define DM_REQUEST_RIGHT	43
+#define DM_RESPOND_EVENT	44
+#define DM_SEND_MSG		45
+#define DM_SET_DISP		46
+#define DM_SET_DMATTR		47
+#define DM_SET_EVENTLIST	48
+#define DM_SET_FILEATTR		49
+#define DM_SET_INHERIT		50
+#define DM_SET_REGION		51
+#define DM_SET_RETURN_ON_DESTROY 52
+#define DM_SYMLINK_BY_HANDLE	53
+#define DM_SYNC_BY_HANDLE	54
+#define DM_UPGRADE_RIGHT	55
+#define DM_WRITE_INVIS		56
+#define DM_OPEN_BY_HANDLE	57
 
 #endif /* __DMAPI_KERN_H__ */
