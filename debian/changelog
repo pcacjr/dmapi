@@ -1,3 +1,9 @@
+dmapi (2.2.0-1) unstable; urgency=low
+
+  * New upstream release (works for both 2.6 and 2.4 now)
+
+ -- Nathan Scott <nathans@debian.org>  Thu, 22 Apr 2004 10:19:32 +1000
+
 dmapi (2.1.0-1) unstable; urgency=low
 
   * New upstream release
