@@ -88,18 +88,18 @@ int		dm_send_destroy_event(
 int		dm_send_mount_event(
 			struct vfs	*vfsp,
 			dm_right_t	vfsp_right,
-			struct bhv_desc *bdp,
+			struct vnode	*vp,
 			dm_right_t	vp_right,
-			struct bhv_desc *rootbdp,
+			struct vnode	*rootvp,
 			dm_right_t	rootvp_right,
 			char		*name1,
 			char		*name2);
 
 int		dm_send_namesp_event(
 			dm_eventtype_t	event,
-			struct bhv_desc *bdp1,
+			struct vnode	*vp1,
 			dm_right_t	vp1_right,
-			struct bhv_desc *bdp2,
+			struct vnode	*vp2,
 			dm_right_t	vp2_right,
 			char		*name1,
 			char		*name2,
