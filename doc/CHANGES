@@ -1,3 +1,8 @@
+dmapi-0.3.0 (4 Dec 2001)
+	- The kernel-side of dmapi is now a module, and the device has
+	  moved.  Change dmapi to use the dmapi device in its new
+	  location of /proc/fs/xfs_dmapi.
+
 dmapi-0.2.2 (27 Jul 2001)
 	- fixes for (hopefully) the last few nits in libtool usage
 
