@@ -50,16 +50,20 @@ static int dmapi_fd = -1;
 int
 dmi_init_service( char *versionstr )
 {
+	/* On 2.6 kernels, /dev/dmapi is it */
 	dmapi_fd = open( "/dev/dmapi", O_RDWR );
-	if( dmapi_fd == -1 ) {
-		/* Try the old device location, used with 2.4 kernels,
-		 * which still offers a compatible interface.
-		 */
-		dmapi_fd = open( "/proc/fs/xfs_dmapi_v2", O_RDWR );
-		if( dmapi_fd == -1 )
-			return -1;
-	}
-	return 0;
+	if (dmapi_fd != -1)
+		return 0;
+
+	/* On 2.4 kernels, fs/dmapi_v2 is newer than fs/xfs_dmapi_v2. */
+	dmapi_fd = open( "/proc/fs/dmapi_v2", O_RDWR );
+	if (dmapi_fd != -1)
+		return 0;
+	dmapi_fd = open( "/proc/fs/xfs_dmapi_v2", O_RDWR );
+	if (dmapi_fd != -1)
+		return 0;
+
+	return -1;
 }
 
 
