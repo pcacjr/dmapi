@@ -18,9 +18,10 @@ Description: Data Management API runtime environment
 Package: dmapi-dev
 Section: devel
 Priority: extra
-Depends: libc6-dev, dmapi
+Depends: libc6-dev, dmapi, xfslibs-dev
 Architecture: any
 Description: Data Management API static libraries and headers
  dmapi-dev contains the libraries and header files needed to
  develop programs which make use of the Data Management API
- (DMAPI).
+ (DMAPI).  You must install the xfslibs-dev package with
+ dmapi-dev.
