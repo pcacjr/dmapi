@@ -37,6 +37,9 @@
 extern	"C" {
 #endif
 
+#ifndef __KERNEL__
+#include <sys/types.h>
+#endif
 #include <linux/types.h>
 
 /**************************************************************************
