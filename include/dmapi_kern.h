@@ -34,11 +34,20 @@
 #define __DMAPI_KERN_H__
 
 
+union sys_dmapi_uarg {
+	void *p;
+	__u64 u;
+};
+typedef union sys_dmapi_uarg sys_dmapi_u;
+
 struct sys_dmapi_args {
-	long arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11;
+	sys_dmapi_u uarg1, uarg2, uarg3, uarg4, uarg5, uarg6, uarg7, uarg8,
+		uarg9, uarg10, uarg11;
 };
 typedef struct sys_dmapi_args sys_dmapi_args_t;
 
+#define DM_Uarg(uap,i)	uap->uarg##i.u
+#define DM_Parg(uap,i)	uap->uarg##i.p
 
 #ifdef __KERNEL__
 

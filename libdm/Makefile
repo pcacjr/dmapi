@@ -34,9 +34,8 @@ TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
 LTLIBRARY = libdm.la
-#LDLIBS = -lhandle
 LT_CURRENT = 0
-LT_REVISION = 2
+LT_REVISION = 3
 LT_AGE = 0
 
 HFILES = dmapi_lib.h
