@@ -178,7 +178,8 @@ typedef enum {
 	DM_FSYS_SYNC_BY_HANDLE		= 31,
 	DM_FSYS_UPGRADE_RIGHT		= 32,
 	DM_FSYS_WRITE_INVIS_RVP		= 33,
-	DM_FSYS_MAX			= 34
+	DM_FSYS_OBJ_REF_HOLD		= 34,
+	DM_FSYS_MAX			= 35
 } dm_fsys_switch_t;
 
 
@@ -426,6 +427,10 @@ typedef int	(*dm_fsys_write_invis_rvp_t)(
 			void		*bufp,
 			int		*rvp);
 
+typedef void	(*dm_fsys_obj_ref_hold_t)(
+			vnode_t		*vp);
+
+
 /* Structure definitions used by the VFS_DMAPI_FSYS_VECTOR call. */
 
 typedef struct {
@@ -465,6 +470,7 @@ typedef struct {
 		dm_fsys_sync_by_handle_t sync_by_handle;
 		dm_fsys_upgrade_right_t upgrade_right;
 		dm_fsys_write_invis_rvp_t write_invis_rvp;
+		dm_fsys_obj_ref_hold_t obj_ref_hold;
 	} u_fc;
 } fsys_function_vector_t;
 

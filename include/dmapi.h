@@ -11,7 +11,7 @@
  *
  * Further, this software is distributed without any warranty that it is
  * free of the rightful claim of any third person regarding infringement
- * or the like.  Any license provided herein, whether implied or
+ * or the like.	 Any license provided herein, whether implied or
  * otherwise, applies only to this software file.  Patent licenses, if
  * any, provided herein do not apply to combinations of this program with
  * other software, or any other product whatsoever.
@@ -46,18 +46,18 @@ extern	"C" {
 /**************************************************************************
  *									  *
  * The SGI implementation of DMAPI is based upon the X/Open document	  *
- * 	Systems Management: Data Storage Managment (XDSM) API		  *
- * dated February 1997.  Not all DMAPI functions and structure fields	  *
+ *	Systems Management: Data Storage Managment (XDSM) API		  *
+ * dated February 1997.	 Not all DMAPI functions and structure fields	  *
  * have been implemented.  Most importantly, the DMAPI functions	  *
  * dm_request_right, dm_release_right, dm_query_right, dm_upgrade_right	  *
  * and dm_downgrade_right do not work as described in the specification.  *
- * 									  *
+ *									  *
  * The XFS filesystem currently does not allow its locking mechanisms to  *
  * be externally accessed from user space.  While the above-mentioned	  *
  * dm_xxx_right functions exist and can be called by applications, they	  *
  * always return successfully without actually obtaining any locks	  *
  * within the filesystem.						  *
- * 									  *
+ *									  *
  * Applications which do not need full rights support and which only	  *
  * make dm_xxx_right calls in order to satisfy the input requirements of  *
  * other DMAPI calls should be able to use these routines to avoid	  *
@@ -65,7 +65,7 @@ extern	"C" {
  * which truely need the capabilities of a full implementation of rights  *
  * will unfortunately have to come up with alternate software solutions	  *
  * until such time as rights can be completely implemented.		  *
- * 									  *
+ *									  *
  * Functions and structure fields defined within this file which are not  *
  * supported in the SGI implementation of DMAPI are indicated by comments *
  * following their definitions such as "not supported", or "not		  *
@@ -81,13 +81,13 @@ extern	"C" {
 */
 
 typedef __s64		dm_attrloc_t;
-typedef	unsigned int	dm_boolean_t;
-typedef	__u64		dm_eventset_t;
-typedef	__u64		dm_fsid_t;
-typedef	__u64		dm_ino_t;
+typedef unsigned int	dm_boolean_t;
+typedef __u64		dm_eventset_t;
+typedef __u64		dm_fsid_t;
+typedef __u64		dm_ino_t;
 typedef __u32		dm_igen_t;
 typedef __s64		dm_off_t;
-typedef	unsigned int	dm_sequence_t;
+typedef unsigned int	dm_sequence_t;
 typedef int		dm_sessid_t;
 typedef __u64		dm_size_t;
 typedef __s64		dm_ssize_t;
@@ -97,8 +97,8 @@ typedef int		dm_token_t;
    and user space.  This affects the field offsets for dm_stat_t.
    The following solution is temporary.
 
-   user space sizes:  dev_t=8  mode_t=4  nlink_t=4
-   kernel space    :  dev_t=2  mode_t=2  nlink_t=2
+   user space sizes:  dev_t=8  mode_t=4	 nlink_t=4
+   kernel space	   :  dev_t=2  mode_t=2	 nlink_t=2
 
 */
 typedef __s64		dm_dev_t;
@@ -106,64 +106,64 @@ typedef int		dm_mode_t;
 typedef int		dm_nlink_t;
 
 
-#define	DM_REGION_NOEVENT	0x0
-#define	DM_REGION_READ		0x1
+#define DM_REGION_NOEVENT	0x0
+#define DM_REGION_READ		0x1
 #define DM_REGION_WRITE		0x2
-#define	DM_REGION_TRUNCATE	0x4
+#define DM_REGION_TRUNCATE	0x4
 
 /* Values for the mask argument used with dm_get_fileattr, dm_get_bulkattr,
    dm_get_dirattrs, and dm_set_fileattr.
 */
 
-#define	DM_AT_MODE	0x0001
-#define	DM_AT_UID	0x0002
-#define	DM_AT_GID	0x0004
-#define	DM_AT_ATIME	0x0008
-#define	DM_AT_MTIME	0x0010
-#define	DM_AT_CTIME	0x0020
-#define	DM_AT_SIZE	0x0040
-#define	DM_AT_DTIME	0x0080
-#define	DM_AT_HANDLE	0x0100
-#define	DM_AT_EMASK	0x0200
-#define	DM_AT_PMANR	0x0400
-#define	DM_AT_PATTR	0x0800
-#define	DM_AT_STAT	0x1000
-#define	DM_AT_CFLAG	0x2000
+#define DM_AT_MODE	0x0001
+#define DM_AT_UID	0x0002
+#define DM_AT_GID	0x0004
+#define DM_AT_ATIME	0x0008
+#define DM_AT_MTIME	0x0010
+#define DM_AT_CTIME	0x0020
+#define DM_AT_SIZE	0x0040
+#define DM_AT_DTIME	0x0080
+#define DM_AT_HANDLE	0x0100
+#define DM_AT_EMASK	0x0200
+#define DM_AT_PMANR	0x0400
+#define DM_AT_PATTR	0x0800
+#define DM_AT_STAT	0x1000
+#define DM_AT_CFLAG	0x2000
 
-#define	DM_EV_WAIT	0x1		/* used in dm_get_events() */
+#define DM_EV_WAIT	0x1		/* used in dm_get_events() */
 
-#define	DM_MOUNT_RDONLY	0x1		/* me_mode field in dm_mount_event_t */
+#define DM_MOUNT_RDONLY 0x1		/* me_mode field in dm_mount_event_t */
 
-#define	DM_RR_WAIT	0x1
+#define DM_RR_WAIT	0x1
 
-#define	DM_UNMOUNT_FORCE 0x1		/* ne_mode field in dm_namesp_event_t */
+#define DM_UNMOUNT_FORCE 0x1		/* ne_mode field in dm_namesp_event_t */
 
-#define	DM_WRITE_SYNC	0x1		/* used in dm_write_invis() */
+#define DM_WRITE_SYNC	0x1		/* used in dm_write_invis() */
 
 #define DM_SESSION_INFO_LEN	256
-#define	DM_NO_SESSION		0
+#define DM_NO_SESSION		0
 #define DM_TRUE			1
 #define DM_FALSE		0
-#define	DM_INVALID_TOKEN	0
-#define	DM_NO_TOKEN		(-1)
-#define	DM_INVALID_HANP		NULL
-#define	DM_INVALID_HLEN		0
-#define	DM_GLOBAL_HANP		((void *)(1LL))
-#define	DM_GLOBAL_HLEN		((size_t)(1))
-#define	DM_VER_STR_CONTENTS	"SGI DMAPI (XDSM) API, Release 1.0."
+#define DM_INVALID_TOKEN	0
+#define DM_NO_TOKEN		(-1)
+#define DM_INVALID_HANP		NULL
+#define DM_INVALID_HLEN		0
+#define DM_GLOBAL_HANP		((void *)(1LL))
+#define DM_GLOBAL_HLEN		((size_t)(1))
+#define DM_VER_STR_CONTENTS	"SGI DMAPI (XDSM) API, Release 1.0."
 
 
-#define	DMEV_SET(event_type, event_list) \
+#define DMEV_SET(event_type, event_list) \
 	((event_list) |= (1 << (event_type)))
-#define	DMEV_CLR(event_type, event_list) \
+#define DMEV_CLR(event_type, event_list) \
 	((event_list) &= ~(1 << (event_type)))
-#define	DMEV_ISSET(event_type, event_list) \
+#define DMEV_ISSET(event_type, event_list) \
 	(int)(((event_list) & (1 << (event_type))) != 0)
-#define	DMEV_ZERO(event_list) \
+#define DMEV_ZERO(event_list) \
 	(event_list) = 0
 
 
-typedef	struct {
+typedef struct {
 	int	vd_offset;	/* offset from start of containing struct */
 	unsigned int	vd_length;	/* length of data starting at vd_offset */
 } dm_vardata_t;
@@ -189,13 +189,13 @@ typedef	struct {
 */
 
 
-#define	DM_ATTR_NAME_SIZE	8
+#define DM_ATTR_NAME_SIZE	8
 
 
 struct dm_attrname {
 	unsigned char	an_chars[DM_ATTR_NAME_SIZE];
 };
-typedef	struct dm_attrname	dm_attrname_t;
+typedef struct dm_attrname	dm_attrname_t;
 
 
 struct dm_attrlist {
@@ -236,7 +236,7 @@ struct	dm_dioinfo {			/* non-standard SGI addition */
 	unsigned int	d_maxiosz;
 	dm_boolean_t	d_dio_only;
 };
-typedef	struct dm_dioinfo	dm_dioinfo_t;
+typedef struct dm_dioinfo	dm_dioinfo_t;
 
 
 struct dm_dispinfo {
@@ -245,7 +245,7 @@ struct dm_dispinfo {
 	dm_vardata_t	di_fshandle;
 	dm_eventset_t	di_eventset;
 };
-typedef	struct dm_dispinfo	dm_dispinfo_t;
+typedef struct dm_dispinfo	dm_dispinfo_t;
 
 
 typedef enum {
@@ -284,14 +284,14 @@ struct dm_eventmsg {
 	dm_sequence_t	ev_sequence;
 	dm_vardata_t	ev_data;
 };
-typedef	struct dm_eventmsg	dm_eventmsg_t;
+typedef struct dm_eventmsg	dm_eventmsg_t;
 
 
 struct dm_cancel_event {			/* not supported */
 	dm_sequence_t	ce_sequence;
 	dm_token_t	ce_token;
 };
-typedef	struct dm_cancel_event	dm_cancel_event_t;
+typedef struct dm_cancel_event	dm_cancel_event_t;
 
 
 struct dm_data_event {
@@ -306,7 +306,7 @@ struct dm_destroy_event {
 	dm_attrname_t		ds_attrname;
 	dm_vardata_t		ds_attrcopy;
 };
-typedef	struct dm_destroy_event dm_destroy_event_t;
+typedef struct dm_destroy_event dm_destroy_event_t;
 
 struct dm_mount_event {
 	dm_mode_t	me_mode;
@@ -316,7 +316,7 @@ struct dm_mount_event {
 	dm_vardata_t	me_name2;
 	dm_vardata_t	me_roothandle;
 };
-typedef	struct dm_mount_event dm_mount_event_t;
+typedef struct dm_mount_event dm_mount_event_t;
 
 struct dm_namesp_event {
 	dm_mode_t	ne_mode;
@@ -326,7 +326,7 @@ struct dm_namesp_event {
 	dm_vardata_t	ne_name2;
 	int		ne_retcode;
 };
-typedef	struct dm_namesp_event dm_namesp_event_t;
+typedef struct dm_namesp_event dm_namesp_event_t;
 
 
 typedef enum {
@@ -337,7 +337,7 @@ typedef enum {
 
 
 struct dm_extent {
-	dm_extenttype_t	ex_type;
+	dm_extenttype_t ex_type;
 	unsigned int	ex_pad1;		/* reserved; do not reference */
 	dm_off_t	ex_offset;
 	dm_size_t	ex_length;
@@ -439,34 +439,34 @@ struct dm_stat {
 		} sgi_xfs;
 	} fsys_dep;
 };
-typedef	struct dm_stat	dm_stat_t;
+typedef struct dm_stat	dm_stat_t;
 
-#define	dt_xfs_igen	fsys_dep.sgi_xfs.igen
-#define	dt_xfs_xflags	fsys_dep.sgi_xfs.xflags
-#define	dt_xfs_extsize	fsys_dep.sgi_xfs.extsize
-#define	dt_xfs_extents	fsys_dep.sgi_xfs.extents
-#define	dt_xfs_aextents	fsys_dep.sgi_xfs.aextents
-#define	dt_xfs_dmstate	fsys_dep.sgi_xfs.dmstate
+#define dt_xfs_igen	fsys_dep.sgi_xfs.igen
+#define dt_xfs_xflags	fsys_dep.sgi_xfs.xflags
+#define dt_xfs_extsize	fsys_dep.sgi_xfs.extsize
+#define dt_xfs_extents	fsys_dep.sgi_xfs.extents
+#define dt_xfs_aextents fsys_dep.sgi_xfs.aextents
+#define dt_xfs_dmstate	fsys_dep.sgi_xfs.dmstate
 
 /* Flags for the non-standard dt_xfs_xflags field. */
 
-#define	DM_XFLAG_REALTIME	0x1
-#define	DM_XFLAG_PREALLOC	0x2
-#define	DM_XFLAG_HASATTR	0x80000000
+#define DM_XFLAG_REALTIME	0x1
+#define DM_XFLAG_PREALLOC	0x2
+#define DM_XFLAG_HASATTR	0x80000000
 
 
 struct	dm_timestruct {
 	time_t		dm_tv_sec;
 	int		dm_tv_nsec;
 };
-typedef	struct dm_timestruct dm_timestruct_t;
+typedef struct dm_timestruct dm_timestruct_t;
 
 
 struct	dm_xstat {				/* not supported */
 	dm_stat_t	dx_statinfo;
 	dm_vardata_t	dx_attrdata;
 };
-typedef	struct dm_xstat	dm_xstat_t;
+typedef struct dm_xstat dm_xstat_t;
 
 
 
@@ -829,7 +829,7 @@ extern int
 dm_pending(
 	dm_sessid_t	sid,
 	dm_token_t	token,
-	dm_timestruct_t	*delay);
+	dm_timestruct_t *delay);
 
 extern int
 dm_probe_hole(
