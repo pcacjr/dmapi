@@ -102,6 +102,7 @@ AC_CHECK_HEADER(xfs/handle.h,, [
 	echo
 	echo 'FATAL ERROR: could not find a valid XFS handle header.'
 	echo 'Install either the xfsprogs-devel (rpm) or the xfslibs-dev (deb) package.'
+	echo 'Alternatively, run "make install-dev" from the xfsprogs source.'
 	exit 1
 ])
 
