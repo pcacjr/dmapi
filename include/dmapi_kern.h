@@ -77,7 +77,7 @@ int		dm_send_data_event(
 			dm_eventtype_t	event,
 			struct bhv_desc *bdp,
 			dm_right_t	vp_right,
-			off_t		off,
+			xfs_off_t	off,
 			size_t		len,
 			int		flags);
 
