@@ -1,8 +1,8 @@
 dmapi (2.0.1-1) unstable; urgency=low
 
-  * Fix dm_handle_to_path().
+  * New upstream release
 
- -- Dean Roehrich, Thu Mar 21 11:10:24 2002
+ -- Nathan Scott <nathans@debian.org>  Fri,  5 Apr 2002 15:50:03 +1100
 
 dmapi (2.0.0-1) unstable; urgency=low
 

@@ -34,7 +34,7 @@ TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
 HFILES = dmapi.h
-LSRCFILES = builddefs.in buildrules dmapi_kern.h
+LSRCFILES = builddefs.in buildmacros buildrules dmapi_kern.h
 
 default install :
 
