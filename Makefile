@@ -38,14 +38,10 @@ include $(TOPDIR)/include/builddefs
 endif
 
 CONFIGURE = configure include/builddefs
-LIBTOOL_LSRCFILES = config.guess config.sub ltmain.sh ltconfig \
-		aclocal.m4
-LIBTOOL_DIRT = libtool
 LSRCFILES = configure configure.in Makepkgs install-sh README VERSION
-LSRCFILES += $(LIBTOOL_LSRCFILES)
+
 LDIRT = config.log config.status config.cache confdefs.h conftest* \
-	configure Logs/* built install.* install-dev.* *.gz \
-	$(LIBTOOL_DIRT)
+	Logs/* built .census install.* install-dev.* *.gz
 
 SUBDIRS = include libdm man doc debian build
 
@@ -62,10 +58,10 @@ else
 clean:	# if configure hasn't run, nothing to clean
 endif
 
-$(CONFIGURE): configure.in include/builddefs.in VERSION
-	rm -f config.cache
+$(CONFIGURE):
 	autoconf
 	./configure
+	touch .census
 
 install: default
 	$(SUBDIRS_MAKERULE)

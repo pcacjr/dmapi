@@ -35,24 +35,21 @@ include $(TOPDIR)/include/builddefs
 
 LTLIBRARY = libdm.la
 LDLIBS = -lhandle
+LT_CURRENT = 0
+LT_REVISION = 0
+LT_AGE = 0
 
 HFILES = dmapi_lib.h
 CFILES = dmapi_lib.c dm_attr.c dm_bulkattr.c dm_config.c dm_dmattr.c \
 	 dm_event.c dm_handle.c dm_handle2path.c dm_hole.c dm_mountinfo.c \
 	 dm_region.c dm_right.c dm_rdwr.c dm_session.c
-LCFLAGS = -D_REENTRANT
 
 default: $(LTLIBRARY)
 
 include $(BUILDRULES)
 
-install: install-libLTLIBRARY
-	$(LT_INSTALL_FILTER)
+install: default
+	$(INSTALL_LTLIB)
 
-install-dev: install-libLTLIBRARY
-	$(LT_DEV_INSTALL_FILTER)
-
-install-libLTLIBRARY: $(LTLIBRARY)
-	$(INSTALL) -m 755 -d $(PKG_LIB_DIR)
-	$(LT_INSTALL)
-	$(LT_INSTALL_SYMLINKS)
+install-dev: default
+	$(INSTALL_LTLIB_DEV)

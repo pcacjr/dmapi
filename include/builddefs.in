@@ -39,10 +39,6 @@ DEBUG = @debug_build@
 OPTIMIZER = @opt_build@
 MALLOCLIB = @malloc_lib@
 
-CPPFLAGS = -I$(TOPDIR)/include
-BUILDRULES = $(TOPDIR)/include/buildrules
-
-# General package information
 PKG_NAME = @pkg_name@
 PKG_RELEASE = @pkg_release@
 PKG_VERSION = @pkg_version@
@@ -55,8 +51,30 @@ PKG_SLIB_DIR = @pkg_slib_dir@
 PKG_INC_DIR = @pkg_inc_dir@
 PKG_MAN_DIR = @pkg_man_dir@
 PKG_DOC_DIR = @pkg_doc_dir@
-PKG_LT_VERSION = @pkg_lt_version@
-PKG_LT_CURRENT = @pkg_lt_current@
+
+CC	= @cc@
+LD	= @ld@
+AWK	= @awk@
+SED	= @sed@
+MAKE	= @make@
+ECHO	= @echo@
+LN_S	= @LN_S@
+ZIP	= @zip@
+TAR	= @tar@
+RPM	= @rpm@
+
+RPM_VERSION = @rpm_version@
+HAVE_ZIPPED_MANPAGES = @have_zipped_manpages@
+MAKEDEPEND = @makedepend@
+
+LIBTOOL	= @LIBTOOL@
+ENABLE_SHARED = @enable_shared@
+
+#
+# end configure'd section
+
+
+BUILDRULES = $(TOPDIR)/include/buildrules
 
 # LCFLAGS, LLDFLAGS, LLDLIBS, LSRCFILES and LDIRT may be specified in
 # user Makefiles. Note: LSRCFILES is anything other than Makefile, $(CFILES)
@@ -64,7 +82,7 @@ PKG_LT_CURRENT = @pkg_lt_current@
 # during the "dist" phase (packaging).
 
 CFLAGS += $(OPTIMIZER) $(DEBUG) -funsigned-char -Wall -D_GNU_SOURCE \
-	$(LCFLAGS) $(CPPFLAGS) '-DVERSION="$(PKG_VERSION)"' \
+	$(LCFLAGS) -I$(TOPDIR)/include '-DVERSION="$(PKG_VERSION)"' \
 	-D_FILE_OFFSET_BITS=64
 
 LDFLAGS = $(LLDFLAGS)
@@ -72,103 +90,63 @@ LDLIBS = $(LLDLIBS) $(MALLOCLIB)
 
 MAKEOPTS = --no-print-directory
 SRCFILES = Makefile $(HFILES) $(CFILES) $(LSRCFILES) $(LFILES) $(YFILES)
-DIRT = $(LDIRT) dep dep.bak $(OBJECTS) $(CMDTARGET) $(LIBTARGET) \
-	$(STATICLIBTARGET) *.[1-9].gz
+DIRT = $(LDIRT) dep dep.bak $(OBJECTS) $(LTCOMMAND) $(LTLIBRARY) *.[1-9].gz
 
 OBJECTS = $(ASFILES:.s=.o) \
           $(CFILES:.c=.o) \
           $(LFILES:.l=.o) \
           $(YFILES:%.y=%.tab.o)
 
-MAKE	= @make@
-CC	= @cc@
-LD	= @ld@
-AWK	= @awk@
-SED	= @sed@
 INSTALL	= $(TOPDIR)/install-sh -o root -g root
-ECHO	= @echo@
-LN_S	= @LN_S@
-
-CCF	= $(CC) $(CFLAGS)
-MAKEF	= $(MAKE) $(MAKEOPTS)
-CXXF	= $(CXX) $(CXXFLAGS)
-LDF	= $(LD) $(LDFLAGS)
-MAKEDEPEND  = @makedepend@
-
-ZIP	= @zip@
-TAR	= @tar@
-RPM	= @rpm@
-RPM_VERSION = @rpm_version@
-
-HAVE_ZIPPED_MANPAGES = @have_zipped_manpages@
 
 SHELL = /bin/sh
 IMAGES_DIR = $(TOPDIR)/all-images
 DIST_DIR = $(TOPDIR)/dist
 
+CCF	= $(CC) $(CFLAGS)
+MAKEF	= $(MAKE) $(MAKEOPTS)
+CXXF	= $(CXX) $(CXXFLAGS)
+LDF	= $(LD) $(LDFLAGS)
+
 # For libtool.  Pieces from Automake, slightly modified.
 top_builddir = $(TOPDIR)
-LIBTOOL	= @LIBTOOL@
-LINK = $(LIBTOOL) --mode=link $(CC)
-LTCOMPILE = $(LIBTOOL) --mode=compile $(CCF)
-LIBTOOL_DEPS = @LIBTOOL_DEPS@
+DIRT += $(LTOBJECTS) $(LTLIBRARY)
+LTLINK = $(LIBTOOL) --mode=link $(CC)
+LTEXEC = $(LIBTOOL) --mode=execute
+LTINSTALL = $(LIBTOOL) --mode=install $(INSTALL)
+LTCOMPILE = $(LIBTOOL) --mode=compile $(CCF) -D_REENTRANT
+LTVERSION = $(LT_CURRENT).$(LT_REVISION).$(LT_AGE)
 LTOBJECTS = $(OBJECTS:.o=.lo)
-DIRT += $(LTOBJECTS) $(LTLIBRARY) .libs/*
-ENABLE_SHARED = @enable_shared@
 ifeq ($(ENABLE_SHARED),yes)
-LDFLAGS += -rpath $(PKG_LIB_DIR) 
-LDFLAGS += -version-info $(subst .,:,$(PKG_LT_VERSION))
+LTLDFLAGS += -rpath $(PKG_LIB_DIR) 
+LTLDFLAGS += -version-info $(subst .,:,$(LTVERSION))
 endif
 LIBNAME = $(basename $(LTLIBRARY))
 
-# Remove things from the manifest that do not belong in the normal install.
-# This is cleanup after libtool --mode=install.
-LT_INSTALL_FILTER = \
-	if test "$(DIST_MANIFEST)" != ""; then \
-		perl -i -ne 'print unless /$(LIBNAME).(so|a|la)$$/' $(DIST_MANIFEST); \
-	fi
+ifeq ($(ENABLE_SHARED),yes)
+INSTALL_LTLIB = \
+	cd $(TOPDIR)/$(LIBNAME)/.libs; \
+	../$(INSTALL) -m 755 -d $(PKG_LIB_DIR); \
+	../$(INSTALL) -m 644 $(LIBNAME).so.$(LTVERSION) $(PKG_LIB_DIR); \
+	test "$(PKG_DISTRIBUTION)" = debian || \
+	../$(INSTALL) -S $(LIBNAME).so.$(LTVERSION) $(PKG_LIB_DIR)/$(LIBNAME).so.$(LT_CURRENT)
+endif
 
+ifeq ($(ENABLE_SHARED),yes)
+INSTALL_LTLIB_DEV = \
+	cd $(TOPDIR)/$(LIBNAME)/.libs; \
+	../$(INSTALL) -m 755 -d $(PKG_LIB_DIR); \
+	../$(INSTALL) -m 644 $(LIBNAME).a $(PKG_LIB_DIR); \
+	../$(INSTALL) -m 644 $(LIBNAME).lai $(PKG_LIB_DIR)/$(LIBNAME).la ; \
+	../$(INSTALL) -S $(LIBNAME).so.$(LT_CURRENT) $(PKG_LIB_DIR)/$(LIBNAME).so
+else
+INSTALL_LTLIB_DEV = $(INSTALL_LTLIB_STATIC)
+endif
 
-# Remove things from the manifest that do not belong in the devel install.
-# This is cleanup after libtool --mode=install.
-LT_DEV_INSTALL_FILTER = \
-	if test "$(DIST_MANIFEST)" != ""; then \
-		perl -i -ane 'print unless $$F[-1] =~ /$(LIBNAME).so./' $(DIST_MANIFEST); \
-	fi
-
-
-# Update manifest with the symlinks that libtool made for us.
-LT_INSTALL_SYMLINKS = \
-	if test "$(DIST_MANIFEST)" != "" && \
-	   test -f $(DIST_ROOT)$(PKG_LIB_DIR)/$(LIBNAME).so.$(PKG_LT_VERSION); then \
-		$(INSTALL) -S $(LIBNAME).so.$(PKG_LT_VERSION) $(PKG_LIB_DIR)/$(LIBNAME).so.$(PKG_LT_CURRENT); \
-		$(INSTALL) -S $(LIBNAME).so.$(PKG_LT_VERSION) $(PKG_LIB_DIR)/$(LIBNAME).so; \
-	fi
-
-
-# Tell libtool to install the library.
-LT_INSTALL = \
-	@list='$(LTLIBRARY)'; for p in $$list; do \
-	  if test -f $$p; then \
-	    echo $(LIBTOOL) --mode=install $(INSTALL) $$p $(DIST_ROOT)$(PKG_LIB_DIR)/$$p; \
-	    $(LIBTOOL) --mode=install $(INSTALL) $$p $(DIST_ROOT)$(PKG_LIB_DIR)/$$p; \
-	  fi; \
-	done
-
-SUBDIRS_MAKERULE = \
-	@for d in $(SUBDIRS) ""; do \
-	    if test -d "$$d" -a ! -z "$$d"; then \
-		$(ECHO) === $$d ===; \
-		$(MAKEF) -C $$d $@ || exit $$?; \
-	    fi; \
-	done
-
-MAN_MAKERULE = \
-    @for f in *.[12345678] ""; do \
-	if test ! -z "$$f"; then \
-	    $(ZIP) --best -c < $$f > $$f.gz; \
-	fi; \
-    done
+INSTALL_LTLIB_STATIC = \
+	cd $(TOPDIR)/$(LIBNAME)/.libs; \
+	../$(INSTALL) -m 755 -d $(PKG_LIB_DIR); \
+	../$(INSTALL) -m 644 $(LIBNAME).a $(PKG_LIB_DIR)
 
 INSTALL_MAN = \
     @for d in $(MAN_PAGES); do \
@@ -191,6 +169,21 @@ INSTALL_MAN = \
 	    fi; \
 	    first=false; \
 	done; \
+    done
+
+SUBDIRS_MAKERULE = \
+	@for d in $(SUBDIRS) ""; do \
+	    if test -d "$$d" -a ! -z "$$d"; then \
+		$(ECHO) === $$d ===; \
+		$(MAKEF) -C $$d $@ || exit $$?; \
+	    fi; \
+	done
+
+MAN_MAKERULE = \
+    @for f in *.[12345678] ""; do \
+	if test ! -z "$$f"; then \
+	    $(ZIP) --best -c < $$f > $$f.gz; \
+	fi; \
     done
 
 DIST_MAKERULE = \

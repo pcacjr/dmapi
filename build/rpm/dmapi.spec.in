@@ -5,7 +5,7 @@ Release: @pkg_release@
 Distribution: @pkg_distribution@
 Packager: @pkg_builder@
 BuildRoot: @build_root@ 
-Prereq: /sbin/ldconfig /usr/bin/libtool
+Prereq: /sbin/ldconfig
 Source: @pkg_name@-@pkg_version@.src.tar.gz
 Copyright: Copyright (C) 2000 Silicon Graphics, Inc.
 Vendor: Silicon Graphics, Inc.

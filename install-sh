@@ -203,10 +203,7 @@ else
 	# second usage
 	#
 	f=$1
-	case "$2" in
-	    $DIST_ROOT/*)	dir=$2 ;;
-	    *)			dir=$DIST_ROOT/$2 ;;
-	esac
+	dir=$DIST_ROOT/$2
 	if $Dflag
 	then
 	    mkdir -p `dirname $dir`

@@ -1,3 +1,7 @@
+attr-0.2.0 (19 Jul 2001)
+	- reworked Makefiles use of libtool slightly
+	- rework some of the Debian packaging rules
+
 dmapi-0.1.2 (18 July 2001)
 	- change dmapi to use /proc instead of /dev/dmapi
 

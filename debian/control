@@ -2,11 +2,12 @@ Source: dmapi
 Section: admin
 Priority: optional
 Maintainer: Nathan Scott <nathans@debian.org>
-Build-Depends: autoconf, debmake, xfsprogs-dev
+Build-Depends: xfslibs-dev, autoconf, debmake, libtool
 Standards-Version: 3.1.1
 
 Package: dmapi
 Depends: ${shlibs:Depends}
+Recommends: xfsdump
 Architecture: any
 Description: Data Management API runtime environment
  Files required by system software using the Data Management API

@@ -1,3 +1,11 @@
+dmapi (0.2.0-0) unstable; urgency=low
+
+  * Reworked package slightly so that its not Debian native
+  * Debian-specific changes now documented in changelog.Debian.gz
+  * New upstream release (see /usr/share/doc/dmapi/changelog.gz)
+
+ -- Nathan Scott <nathans@debian.org>  Thu, 19 Jul 2001 17:14:40 +1000
+
 dmapi (0.1.0) unstable; urgency=low
 
   * Initial release.
