@@ -1,3 +1,6 @@
+dmapi-2.0.2 (13 April 2002)
+	- Minor build system updates
+
 dmapi-2.0.0 (07 February 2002)
 	- Major release to coincide with switch to new extended
 	  attributes system call interfaces
