@@ -1,3 +1,10 @@
+dmapi (2.0.0-1) unstable; urgency=low
+
+  * Major release to coincide with switch to new extended attributes
+    system call interfaces
+
+ -- Nathan Scott <nathans@debian.org>  Thu,  7 Feb 2002 13:25:26 +1100
+
 dmapi (0.3.0-1) unstable; urgency=low
 
   * New upstream release

@@ -1,16 +1,20 @@
-dmapi-0.3.0 (4 Dec 2001)
+dmapi-2.0.0 (07 February 2002)
+	- Major release to coincide with switch to new extended
+	  attributes system call interfaces
+
+dmapi-0.3.0 (04 December 2001)
 	- The kernel-side of dmapi is now a module, and the device has
 	  moved.  Change dmapi to use the dmapi device in its new
 	  location of /proc/fs/xfs_dmapi.
 
-dmapi-0.2.2 (27 Jul 2001)
+dmapi-0.2.2 (27 July 2001)
 	- fixes for (hopefully) the last few nits in libtool usage
 
-dmapi-0.2.1 (23 Jul 2001)
+dmapi-0.2.1 (23 July 2001)
 	- install static libs and libtool archives into /usr/lib
 	- shared libraries are unchanged, however
 
-dmapi-0.2.0 (19 Jul 2001)
+dmapi-0.2.0 (19 July 2001)
 	- reworked Makefiles use of libtool slightly
 	- rework some of the Debian packaging rules
 	- libdm is now installed into /lib instead of /usr/lib
