@@ -1,3 +1,6 @@
+dmapi-2.0.8 (26 April 2003)
+	- Rework configure.in to make use of shared macros.
+
 dmapi-2.0.7 (14 April 2003)
 	- Fix configure tests that used AC_PATH_PROG incorrectly.
 
