@@ -8,7 +8,7 @@ AC_SUBST(pkg_name)
 # defaults (to change paths and/or executables, build parameters, etc):
 #
 #   DEBUG  OPTIMIZER  MALLOCLIB
-#   PLATFORM  DISTRIBUTION  BUILDER
+#   PLATFORM  DISTRIBUTION  INSTALL_USER  INSTALL_GROUP
 #   MAKE  CC  LD  TAR  ZIP  AWK  SED  ECHO  RPM  LIBTOOL
 #
 
@@ -44,9 +44,13 @@ test -z "$DISTRIBUTION" || pkg_distribution="$DISTRIBUTION"
 AC_SUBST(pkg_distribution)
 AC_SUBST(pkg_platform)
 
-pkg_builder=`id -u -n`@`hostname`
-test -z "$BUILDER" || pkg_builder="$BUILDER"
-AC_SUBST(pkg_builder)
+pkg_user=root
+test -z "$INSTALL_USER" || pkg_user="$INSTALL_USER"
+AC_SUBST(pkg_user)
+
+pkg_group=root
+test -z "$INSTALL_GROUP" || pkg_group="$INSTALL_GROUP"
+AC_SUBST(pkg_group)
 
 dnl check if user wants their own C compiler
 test -z "$CC" && AC_PROG_CC
