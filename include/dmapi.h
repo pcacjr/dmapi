@@ -458,6 +458,11 @@ typedef struct dm_stat	dm_stat_t;
 
 #define DM_XFLAG_REALTIME	0x1
 #define DM_XFLAG_PREALLOC	0x2
+#define DM_XFLAG_IMMUTABLE	0x3
+#define DM_XFLAG_APPEND		0x4
+#define DM_XFLAG_SYNC		0x5
+#define DM_XFLAG_NOATIME	0x6
+#define DM_XFLAG_NODUMP		0x7
 #define DM_XFLAG_HASATTR	0x80000000
 
 
