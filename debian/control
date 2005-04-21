@@ -21,7 +21,7 @@ Description: Data Management API runtime environment
  by the libdm library.
 
 Package: libdm0-dev
-Section: devel
+Section: libdevel
 Priority: extra
 Depends: libc6-dev, libdm0, xfslibs-dev (>= 2.0.0)
 Provides: dmapi-dev
