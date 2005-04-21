@@ -1,6 +1,6 @@
 dmapi (2.2.1-1) unstable; urgency=low
 
-  * New upstream release
+  * New upstream release (closes: #305055)
 
  -- Nathan Scott <nathans@debian.org>  Wed, 29 Sep 2004 11:28:20 +1000
 
