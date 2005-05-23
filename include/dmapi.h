@@ -150,7 +150,7 @@ typedef int		dm_nlink_t;
 #define DM_INVALID_HLEN		0
 #define DM_GLOBAL_HANP		((void *)(1LL))
 #define DM_GLOBAL_HLEN		((size_t)(1))
-#define DM_VER_STR_CONTENTS	"SGI DMAPI (XDSM) API, Release 1.0."
+#define DM_VER_STR_CONTENTS	"SGI DMAPI (XDSM) API, Release 1.1."
 
 
 #define DMEV_SET(event_type, event_list) \
@@ -481,11 +481,6 @@ typedef struct dm_xstat dm_xstat_t;
 
 
 #define MAXDMFSFIDSZ	46
-
-typedef struct dm_fsfid {
-	__u16		fid_len;		/* length of data in bytes */
-	unsigned char	fid_data[MAXDMFSFIDSZ];	/* data (fid_len worth)  */
-} dm_fsfid_t;
 
 struct dm_fid {
 	__u16	dm_fid_len;		/* length of remainder	*/

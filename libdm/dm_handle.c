@@ -31,15 +31,9 @@
  * http://oss.sgi.com/projects/GenInfo/SGIGPLNoticeExplan/
  */
 
-#ifdef linux
-#include <xfs/libxfs.h>
-#include <xfs/handle.h>
-#else
-#include <sys/handle.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#endif
 
 #include <dmapi.h>
 #include <dmapi_kern.h>
@@ -153,9 +147,8 @@ parse_handle(
 	dm_ino_t	*inop,
 	dm_igen_t	*igenp)
 {
-	xfs_handle_t	handle;
-	xfs_fid2_t	*xfid2;
-	fid_t		*fidp;
+	dm_handle_t	handle;
+	dm_fid_t	*dmfid;
 
 	if (hanp == DM_GLOBAL_HANP && hlen == DM_GLOBAL_HLEN)
 		return(DM_HANDLE_GLOBAL);
@@ -164,30 +157,24 @@ parse_handle(
 		return(DM_HANDLE_BAD);
 
 	memcpy(&handle, hanp, hlen);
-	if (!handle.ha_fsid.val[0] || !handle.ha_fsid.val[1])
+	if (! handle.ha_fsid)
 		return(DM_HANDLE_BAD);
 	if (fsidp)
 		memcpy(fsidp, &handle.ha_fsid, sizeof(handle.ha_fsid));
 	if (hlen == sizeof(handle.ha_fsid))
 		return(DM_HANDLE_FILESYSTEM);
 
-#ifdef linux
-	fidp = (fid_t*)&handle.ha_fid;
-	if (fidp->fid_len != (hlen - sizeof(handle.ha_fsid) - sizeof(fidp->fid_len)))
+	if (handle.ha_fid.dm_fid_len != (hlen - sizeof(handle.ha_fsid) - sizeof(handle.ha_fid.dm_fid_len)))
 		return(DM_HANDLE_BAD);
-#else
-	if (handle.ha_fid.fid_len != (hlen - sizeof(handle.ha_fsid) - sizeof(handle.ha_fid.fid_len)))
-		return(DM_HANDLE_BAD);
-#endif
 
-	xfid2 = (struct xfs_fid2 *)&handle.ha_fid;
-	if (xfid2->fid_len == sizeof *xfid2 - sizeof xfid2->fid_len) {
-		if (xfid2->fid_pad)
+	dmfid = &handle.ha_fid;
+	if (dmfid->dm_fid_len == sizeof *dmfid - sizeof dmfid->dm_fid_len) {
+		if (dmfid->dm_fid_pad)
 			return(DM_HANDLE_BAD);
 		if (inop)
-			*inop  = xfid2->fid_ino;
+			*inop  = dmfid->dm_fid_ino;
 		if (igenp)
-			*igenp = xfid2->fid_gen;
+			*igenp = dmfid->dm_fid_gen;
 	} else {
 		return(DM_HANDLE_BAD);
 	}
@@ -291,17 +278,16 @@ dm_make_handle(
 	void		**hanpp,
 	size_t		*hlenp)
 {
-	xfs_fid2_t	*xfid2;
-/* XXX */
-	xfs_handle_t	handle;
+	dm_fid_t	*fid;
+	dm_handle_t	handle;
 
 	memcpy(&handle.ha_fsid, fsidp, sizeof(handle.ha_fsid));
-	xfid2 = (struct xfs_fid2 *)&handle.ha_fid;
-	xfid2->fid_pad = 0;
-	xfid2->fid_gen = (__u32)*igenp;
-	xfid2->fid_ino = *inop;
-	xfid2->fid_len = sizeof(*xfid2) - sizeof(xfid2->fid_len);
-	*hlenp = sizeof(*xfid2) + sizeof(handle.ha_fsid);
+	fid = &handle.ha_fid;
+	fid->dm_fid_pad = 0;
+	fid->dm_fid_gen = (__u32)*igenp;
+	fid->dm_fid_ino = *inop;
+	fid->dm_fid_len = sizeof(*fid) - sizeof(fid->dm_fid_len);
+	*hlenp = sizeof(*fid) + sizeof(handle.ha_fsid);
 	if ((*hanpp = malloc(*hlenp)) == NULL) {	
 		errno = ENOMEM;
 		return -1;

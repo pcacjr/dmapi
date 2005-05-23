@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2002 Silicon Graphics, Inc.  All Rights Reserved.
+ * Copyright (c) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of version 2 of the GNU General Public License as
@@ -76,11 +76,13 @@ struct dm_handle_t;
 struct filesystem_dmapi_operations {
 	int (*get_fsys_vector)(struct super_block *sb, void *addr);
 	int (*fh_to_inode)(struct super_block *sb, struct inode **ip,
-			   struct dm_fsfid *fid);
+			   dm_fid_t *fid);
 	struct file_operations * (*get_invis_ops)(struct inode *ip);
-	int (*inode_to_fh)(struct inode *ip, struct dm_fsfid *fid,
+	int (*inode_to_fh)(struct inode *ip, dm_fid_t *fid,
 			   dm_fsid_t *fsid );
 	void (*get_fsid)(struct super_block *sb, dm_fsid_t *fsid);
+#define HAVE_DM_QUEUE_FLUSH
+	int (*flushing)(struct inode *ip);
 };
 
 
@@ -135,12 +137,22 @@ int		dm_ip_to_handle (
 			struct inode	*ip,
 			dm_handle_t	*handlep);
 
+#define HAVE_DM_RELEASE_THREADS_ERRNO
+int		dm_release_threads(
+			struct super_block	*sb,
+			struct inode		*inode,
+			int			errno);
+
 void		dmapi_register(
 			struct file_system_type *fstype,
 			struct filesystem_dmapi_operations *dmapiops);
 
 void		dmapi_unregister(
 			struct file_system_type *fstype);
+
+int		dmapi_registered(
+			struct file_system_type *fstype,
+			struct filesystem_dmapi_operations **dmapiops);
 
 
 /* The following prototypes and definitions are used by DMAPI as its
