@@ -1,3 +1,7 @@
+dmapi-2.2.2 (10 November 2005)
+	- Sync up build system (m4 macros, etc) with other projects
+	- Update SGI copyright/licence notices
+
 dmapi-2.2.1 (29 September 2004)
 	- Update m4 macros, incorporating some portability changes.
 	- Sync up with changes to the kernel DMAPI headers.
