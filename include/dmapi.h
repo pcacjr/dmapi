@@ -24,9 +24,9 @@ extern	"C" {
 #endif
 
 #ifndef __KERNEL__
-#include <sys/types.h>
+#include <xfs/xfs.h>
+#include <xfs/handle.h>
 #endif
-#include <linux/types.h>
 
 /**************************************************************************
  *									  *

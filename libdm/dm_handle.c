@@ -288,12 +288,7 @@ dm_make_fshandle(
 	void		**hanpp,
 	size_t		*hlenp)
 {
-/* XXX */
-#if 0
 	*hlenp = sizeof(fsid_t);
-#else
-	*hlenp = sizeof(__kernel_fsid_t);
-#endif
 	if ((*hanpp = malloc(*hlenp)) == NULL) {	
 		errno = ENOMEM;
 		return -1;

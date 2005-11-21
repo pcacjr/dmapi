@@ -16,27 +16,15 @@
  * Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <stdio.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <mntent.h>
-#ifdef linux
-#include <xfs/libxfs.h>
-#include <xfs/handle.h>
-#include <asm/posix_types.h>
-#include <linux/dirent.h>
-#include <syscall.h>
-#endif
-
 #include <dmapi.h>
 #include <dmapi_kern.h>
 #include "dmapi_lib.h"
 
+#include <mntent.h>
+#include <dirent.h>
+#ifdef linux
+#include "getdents.h"
+#endif
 
 static int getcomp(int dirfd, void *targhanp, size_t targhlen,
 			char *bufp, size_t buflen, size_t *rlenp);
@@ -186,11 +174,7 @@ getcomp(
 	int		loc = 0;	/* byte offset of entry in the buffer */
 	int		size = 0;	/* number of bytes of data in buffer */
 	int		eof = 0;	/* did last ngetdents exhaust dir.? */
-#ifdef linux
-	struct dirent	*dp;
-#else
 	struct dirent64 *dp;		/* pointer to directory entry */
-#endif
 	char		hbuf[DM_MAX_HANDLE_SIZE];
 	size_t		hlen;
 	size_t		dirlen;		/* length of dirfd's pathname */
@@ -215,7 +199,7 @@ getcomp(
 
 	for(;;) {
 		if (size > 0) {
-			dp = (struct dirent *)&buf[loc];
+			dp = (struct dirent64 *)&buf[loc];
 			loc += dp->d_reclen;
 		}
 		if (loc >= size) {
@@ -226,20 +210,9 @@ getcomp(
 		}
 		if (size == 0) {	/* refill buffer */
 #ifdef linux
-			int cnt;
-
-			do {
-				cnt = syscall(SYS_getdents, dirfd,
-					      (struct dirent *)buf,
-					      sizeof(buf));
-				if (cnt > 0 )
-					size += cnt;
-				if (cnt < 0)
-					size = cnt;
-			} while( cnt > 0 );
-
+			size = __getdents_wrap(dirfd, (char *)buf, sizeof(buf));
 #else
-			size = ngetdents64(dirfd, (struct dirent *)buf,
+			size = ngetdents64(dirfd, (struct dirent64 *)buf,
 				    sizeof(buf), &eof);
 #endif
 			if (size == 0)	{	/* This also means EOF */
@@ -249,7 +222,7 @@ getcomp(
 				return(errno);
 			}
 		}
-		dp = (struct dirent *)&buf[loc];
+		dp = (struct dirent64 *)&buf[loc];
 
 		if (dp->d_ino != ino)
 			continue;	/* wrong inode; try again */
