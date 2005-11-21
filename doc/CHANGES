@@ -1,3 +1,8 @@
+dmapi-2.2.3 (21 November 2005)
+	- Make use of getdents64 instead of plain getdents.
+	- Remove remaining uses of Linux kernel types to resolve
+	  some build issues with newer versions of XFS headers.
+
 dmapi-2.2.2 (10 November 2005)
 	- Sync up build system (m4 macros, etc) with other projects
 	- Update SGI copyright/licence notices
