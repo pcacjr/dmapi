@@ -3,7 +3,7 @@ dmapi (2.2.4-1) unstable; urgency=low
   * New upstream release
   * Fix build dependencies and use -O2 now (closes: #357788)
 
- -- Nathan Scott <nathans@debian.org>  Mon, 21 Nov 2005 17:48:53 +1100
+ -- Nathan Scott <nathans@debian.org>  Wed, 22 Mar 2006 10:16:13 +1100
 
 dmapi (2.2.3-1) unstable; urgency=low
 
