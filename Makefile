@@ -50,8 +50,10 @@ aclocal.m4::
 
 install: default
 	$(SUBDIRS_MAKERULE)
+ifneq ($(PKG_DISTRIBUTION), debian)
 	$(INSTALL) -m 755 -d $(PKG_DOC_DIR)
 	$(INSTALL) -m 644 README $(PKG_DOC_DIR)
+endif
 
 install-dev: default
 	$(SUBDIRS_MAKERULE)

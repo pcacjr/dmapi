@@ -1,4 +1,7 @@
-dmapi-2.2.4 (21 November 2005)
+dmapi-2.2.5 (28 March 2006)
+	- Debian packaging updates (debmake out, debhelper in)
+
+dmapi-2.2.4 (22 March 2006)
 	- Use -O2 for builds, not -O1.
 	- Fix Debian build packaging dependency.
 

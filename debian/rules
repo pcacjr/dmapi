@@ -5,7 +5,7 @@ develop = libdm0-dev
 library = libdm0
 
 dirdev = debian/$(develop)
-dirlib = debian/tmp
+dirlib = debian/$(library)
 pkgdev = DIST_ROOT=`pwd`/$(dirdev); export DIST_ROOT;
 pkglib = DIST_ROOT=`pwd`/$(dirlib); export DIST_ROOT;
 stdenv = @GZIP=-q; export GZIP;
@@ -13,6 +13,7 @@ stdenv = @GZIP=-q; export GZIP;
 options = export DEBUG=-DNDEBUG DISTRIBUTION=debian \
 	  INSTALL_USER=root INSTALL_GROUP=root ;
 checkdir = test -f debian/rules
+checkver = rm -f debian/compat && echo 5 > debian/compat
 
 build: built
 built: config
@@ -32,30 +33,32 @@ clean:
 	$(checkdir)
 	-rm -f built .census
 	$(MAKE) distclean
-	-rm -rf $(dirtmp) $(dirdev) $(dirtmp) debian/*substvars debian/files*
+	-rm -rf $(dirdev) $(dirlib)
+	-rm -f debian/*substvars debian/files* debian/*.debhelper debian/compat
 
 binary-indep:
 
-# Note1: dev pkg with .so symlinks to base pkg confuses debstd;
-# so the .so 'Dangling symlink' message is benign.
-# Note2: absolute symlinks (required by policy) confuse debstd;
-# so we'll filter out symlink messages entirely now.
-# 
 binary-arch: checkroot built
 	@echo "== dpkg-buildpackage: binary-arch" 1>&2
 	$(checkdir)
-	-rm -rf $(dirtmp) $(dirdev) $(dirlib)
+	$(checkver)
+	-rm -rf $(dirdev) $(dirlib)
 	$(pkgdev) $(MAKE) -C . install-dev
 	$(pkglib) $(MAKE) -C . install
 	$(pkglib) $(MAKE) -C build src-manifest
-	@echo "== dpkg-buildpackage: debstd" 1>&2
-	$(stdenv) debstd -m | grep -v 'Dangling symlink'
-	dpkg-gencontrol -isp -p$(develop) -P$(dirdev)
-	dpkg-gencontrol -isp -p$(library) -P$(dirlib)
-	chown -R root.root $(dirtmp) $(dirdev) $(dirlib)
-	chmod -R go=rX $(dirtmp) $(dirdev) $(dirlib)
-	dpkg --build $(dirdev) ..
-	dpkg --build $(dirlib) .. 
+
+	dh_installdocs
+	dh_installchangelogs
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+
+	dh_md5sums
+	dh_builddeb
 
 binary: binary-indep binary-arch
 
