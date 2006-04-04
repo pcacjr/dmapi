@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2002-2003 Silicon Graphics, Inc.  All Rights Reserved.
+# Copyright (c) 2002-2006 Silicon Graphics, Inc.  All Rights Reserved.
 #
 # @configure_input@
 #
@@ -23,8 +23,8 @@ PKG_PLATFORM	= @pkg_platform@
 PKG_DISTRIBUTION= @pkg_distribution@
 PKG_BIN_DIR	= @bindir@
 PKG_SBIN_DIR	= @sbindir@
-PKG_LIB_DIR	= @libdir@
-PKG_DEVLIB_DIR	= @libexecdir@
+PKG_LIB_DIR	= @libdir@@libdirsuffix@
+PKG_DEVLIB_DIR	= @libexecdir@@libdirsuffix@
 PKG_INC_DIR	= @includedir@/xfs
 PKG_MAN_DIR	= @mandir@
 PKG_DOC_DIR	= @datadir@/doc/@pkg_name@
