@@ -1,3 +1,6 @@
+dmapi-2.2.6 (4 July 2006)
+	- Makefile dependency fixes
+
 dmapi-2.2.5 (28 March 2006)
 	- Debian packaging updates (debmake out, debhelper in)
 

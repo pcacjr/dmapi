@@ -52,6 +52,16 @@ HAVE_ZIPPED_MANPAGES = @have_zipped_manpages@
 
 ifeq ($(PKG_PLATFORM),linux)
 PCFLAGS = -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64
+DEPENDFLAGS = -D__linux__
+endif
+ifeq ($(PKG_PLATFORM),darwin)
+DEPENDFLAGS = -D__APPLE__
+endif
+ifeq ($(PKG_PLATFORM),irix)
+DEPENDFLAGS = -D__sgi__
+endif
+ifeq ($(PKG_PLATFORM),freebsd)
+DEPENDFLAGS = -D__FreeBSD__
 endif
 
 GCFLAGS = $(OPTIMIZER) $(DEBUG) -funsigned-char -fno-strict-aliasing -Wall \
