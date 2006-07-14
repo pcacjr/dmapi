@@ -1,3 +1,6 @@
+dmapi-2.2.7 (14 July 2006)
+	- Fix issues with makedepend on libtool libraries.
+
 dmapi-2.2.6 (4 July 2006)
 	- Makefile dependency fixes
 
