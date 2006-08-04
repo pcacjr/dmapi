@@ -73,7 +73,7 @@ AC_DEFUN([AC_MULTILIB],
   AC_SUBST(libdirsuffix)
 ])
 
-# 
+#
 # Generic macro, sets up all of the global packaging variables.
 # The following environment variables may be set to override defaults:
 #   DEBUG OPTIMIZER MALLOCLIB PLATFORM DISTRIBUTION INSTALL_USER INSTALL_GROUP
@@ -102,11 +102,11 @@ AC_DEFUN([AC_PACKAGE_GLOBALS],
     malloc_lib="$MALLOCLIB"
     AC_SUBST(malloc_lib)
 
-    pkg_user=`id -u`
+    pkg_user=`id -u -n`
     test -z "$INSTALL_USER" || pkg_user="$INSTALL_USER"
     AC_SUBST(pkg_user)
 
-    pkg_group=`id -g`
+    pkg_group=`id -g -n`
     test -z "$INSTALL_GROUP" || pkg_group="$INSTALL_GROUP"
     AC_SUBST(pkg_group)
 
@@ -291,7 +291,8 @@ AC_DEFUN([AC_PACKAGE_NEED_LIBXFSINIT_LIBXFS],
     libxfs="-lxfs"
     test -f `pwd`/../xfsprogs/libxfs/libxfs.la && \
         libxfs="`pwd`/../xfsprogs/libxfs/libxfs.la"
-    test -f /usr/lib/libxfs.la && libxfs="/usr/lib/libxfs.la"
+    test -f ${libexecdir}${libdirsuffix}/libxfs.la && \
+	libxfs="${libexecdir}${libdirsuffix}/libxfs.la"
     AC_SUBST(libxfs)
   ])
 
@@ -306,7 +307,8 @@ AC_DEFUN([AC_PACKAGE_NEED_OPEN_BY_FSHANDLE],
     libhdl="-lhandle"
     test -f `pwd`/../xfsprogs/libhandle/libhandle.la && \
         libhdl="`pwd`/../xfsprogs/libhandle/libhandle.la"
-    test -f /usr/lib/libhandle.la && libhdl="/usr/lib/libhandle.la"
+    test -f ${libexecdir}${libdirsuffix}/libhandle.la && \
+	libhdl="${libexecdir}${libdirsuffix}/libhandle.la"
     AC_SUBST(libhdl)
   ])
 
@@ -321,7 +323,8 @@ AC_DEFUN([AC_PACKAGE_NEED_ATTRLIST_LIBHANDLE],
     libhdl="-lhandle"
     test -f `pwd`/../xfsprogs/libhandle/libhandle.la && \
         libhdl="`pwd`/../xfsprogs/libhandle/libhandle.la"
-    test -f /usr/lib/libhandle.la && libhdl="/usr/lib/libhandle.la"
+    test -f ${libexecdir}${libdirsuffix}/libhandle.la && \
+	libhdl="${libexecdir}${libdirsuffix}/libhandle.la"
     AC_SUBST(libhdl)
   ])
 
