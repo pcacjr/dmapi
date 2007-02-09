@@ -294,6 +294,7 @@ get_mnt(
 
 		/* skip anything that isn't dmapi */
 		if ((hasmntopt(mntent, "dmapi") == 0) &&
+		    (hasmntopt(mntent, "dmi") == 0) &&
 		    (hasmntopt(mntent, "xdsm") == 0)) {
 			continue;
 		}
