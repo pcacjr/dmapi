@@ -9,9 +9,10 @@ HFILES = dmapi.h
 LSRCFILES = builddefs.in buildmacros buildrules dmapi_kern.h
 LDIRT = xfs
 
-default install :
-	rm -f xfs
-	$(LN_S) . xfs
+xfs:
+	$(LN_S) . $@
+
+default install: xfs
 
 include $(BUILDRULES)
 
