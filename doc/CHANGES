@@ -1,3 +1,6 @@
+dmapi-2.2.9
+	- Various build system updates.
+
 dmapi-2.2.8 (9 February 2007)
 	- Fix a problem in get_mnt() called by dm_handle_to_path()
 	  The "dmi" mount option was not considered.
