@@ -6,7 +6,7 @@ TOPDIR = ..
 include $(TOPDIR)/include/builddefs
 
 HFILES = dmapi.h
-LSRCFILES = builddefs.in buildmacros buildrules dmapi_kern.h
+LSRCFILES = builddefs.in buildmacros buildrules install-sh dmapi_kern.h
 LDIRT = xfs
 
 default install: xfs
