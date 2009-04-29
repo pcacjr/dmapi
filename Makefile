@@ -9,21 +9,21 @@ ifeq ($(HAVE_BUILDDEFS), yes)
 include $(TOPDIR)/include/builddefs
 endif
 
-CONFIGURE = aclocal.m4 configure config.guess config.sub \
+CONFIGURE = aclocal.m4 configure config.guess config.sub configure install-sh \
 	    ltmain.sh m4/libtool.m4 m4/ltoptions.m4 m4/ltsugar.m4 \
-	    m4/ltversion.m4 m4/lt~obsolete.m4 \
-	    include/builddefs
-LSRCFILES = configure.in Makepkgs install-sh README VERSION $(CONFIGURE)
+	    m4/ltversion.m4 m4/lt~obsolete.m4
+LSRCFILES = configure.in Makepkgs README VERSION $(CONFIGURE)
 
 LDIRT = config.log .dep config.status config.cache confdefs.h conftest* \
-	Logs/* built .census install.* install-dev.* *.gz
+	Logs/* built .census install.* install-dev.* *.gz autom4te.cache/* \
+	libtool include/builddefs
 
 LIB_SUBDIRS = include libdm
 TOOL_SUBDIRS = m4 man doc debian build
 
 SUBDIRS = $(LIB_SUBDIRS) $(TOOL_SUBDIRS)
 
-default: configure include/builddefs
+default: include/builddefs
 ifeq ($(HAVE_BUILDDEFS), no)
 	$(MAKE) -C . $@
 else
@@ -44,11 +44,13 @@ endif
 # versions will copy those files anyway, and don't understand -i.
 LIBTOOLIZE_INSTALL = `libtoolize -n -i >/dev/null 2>/dev/null && echo -i`
 
-configure include/builddefs:
+configure:
 	libtoolize -c $(LIBTOOLIZE_INSTALL) -f
 	cp include/install-sh .
 	aclocal -I m4
 	autoconf
+
+include/builddefs: configure
 	./configure \
 		--prefix=/ \
 		--exec-prefix=/ \
@@ -77,7 +79,8 @@ install-dev: default $(addsuffix -install-dev,$(SUBDIRS))
 %-install-dev:
 	$(MAKE) -C $* install-dev
 
-realclean distclean: clean
-	rm -f $(LDIRT) $(CONFIGURE)
-	rm -f include/builddefs include/config.h install-sh libtool
-	rm -rf autom4te.cache Logs
+distclean: clean
+	rm -f $(LDIRT)
+
+realclean: distclean
+	rm -f $(CONFIGURE)
