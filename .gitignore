@@ -1,0 +1,39 @@
+# object files
+*.o
+
+# build system
+.census
+Logs/
+include/builddefs
+install-sh
+
+# magic diretory symlinks
+include/xfs
+
+# Makepgs
+build/src-manifest
+build/dmapi-*.tar.gz
+doc/CHANGES.gz
+dmapi-*
+
+# autoconf generated files
+aclocal.m4
+autom4te.cache/
+config.guess
+config.log
+config.status
+config.sub
+configure
+
+# libtool
+libtool
+ltmain.sh
+*.lo
+*.la
+.libs
+
+# quilt stuff
+.pc/
+patches/
+
+# binaries
