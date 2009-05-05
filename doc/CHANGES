@@ -1,4 +1,4 @@
-dmapi-2.2.10
+dmapi-2.2.10 (5 May 2009)
 	- Update the Makepkgs script to generate proper source tarballs.
 	- Small specfile improvements, thanks to Jan Engelhardt.
 	- Various autoconf/libtool fixes, thanks to Andreas Gruenbacher.
